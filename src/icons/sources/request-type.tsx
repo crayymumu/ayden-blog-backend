@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type {} from "react";
 import { Box, type SxProps } from "@mui/material";
 import { AnnualLeaveIcon } from "./annual-leave";
 import { SickLeaveIcon } from "./sick-leave";

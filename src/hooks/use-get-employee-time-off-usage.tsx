@@ -5,7 +5,9 @@ import dayjs from "dayjs";
 
 export const useGetEmployeeTimeOffUsage = ({
   employeeId,
-}: { employeeId?: number }) => {
+}: {
+  employeeId?: number;
+}) => {
   const migratedMigratedMigratedMigratedMigratedMigratedQuery =
     useList<TimeOff>({
       resource: "time-offs",

@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model BUser {
+  id            String   @id @db.VarChar(36)
+  name          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(255)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String?  @db.VarChar(255)
+  nickname      String?  @db.VarChar(50)
+  flag          Int?     @default(1)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  sessions  BSession[]
+  accounts  BAccount[]
+  userRoles BUserRole[]
+  blogs     BBlog[]
+
+  @@map("b_user")
+}
+
+model BSession {
+  id        String   @id @db.VarChar(36)
+  userId    String   @map("user_id") @db.VarChar(36)
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("ip_address") @db.VarChar(45)
+  userAgent String?  @map("user_agent") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user BUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("b_session")
+}
+
+model BAccount {
+  id                    String    @id @db.VarChar(36)
+  userId                String    @map("user_id") @db.VarChar(36)
+  accountId             String    @map("account_id") @db.VarChar(255)
+  providerId            String    @map("provider_id") @db.VarChar(255)
+  accessToken           String?   @map("access_token") @db.Text
+  refreshToken          String?   @map("refresh_token") @db.Text
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?   @db.VarChar(255)
+  idToken               String?   @map("id_token") @db.Text
+  password              String?   @db.VarChar(255)
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  user BUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("b_account")
+}
+
+model BVerification {
+  id         String   @id @db.VarChar(36)
+  identifier String   @db.VarChar(255)
+  value      String   @db.Text
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("b_verification")
+}
+
+model BBlog {
+  blogId        Int       @id @default(autoincrement()) @map("blog_id")
+  blogTitle     String?   @map("blog_title") @db.VarChar(255)
+  blogAbstract  String?   @map("blog_abstract") @db.VarChar(500)
+  blogReadcount Int       @default(0) @map("blog_readCount")
+  blogScore     Int       @default(0) @map("blog_score")
+  blogSource    Int?      @map("blog_source")
+  blogLevel     Int       @default(0) @map("blog_level")
+  blogPassword  String?   @map("blog_password") @db.VarChar(255)
+  blogAuthor    String?   @map("blog_author") @db.VarChar(36)
+  blogUpdatetime DateTime? @map("blog_updateTime")
+  blogCreatetime DateTime? @map("blog_createTime")
+  blogFlag      Int       @default(0) @map("blog_flag")
+  blogMdcontent String?   @map("blog_mdContent") @db.LongText
+  blogContent   String?   @map("blog_content") @db.LongText
+
+  author     BUser?          @relation(fields: [blogAuthor], references: [id])
+  categories BBlogCategory[]
+  tags       BBlogTag[]
+  comments   BComment[]
+
+  @@map("b_blog")
+}
+
+model BCategory {
+  categoryId          Int       @id @default(autoincrement()) @map("category_id")
+  categoryName        String?   @map("category_name") @db.VarChar(100)
+  categoryTime        DateTime? @map("category_time")
+  categoryDescription String?   @map("category_description") @db.VarChar(255)
+  categoryFlag        Int       @default(0) @map("category_flag")
+
+  blogs BBlogCategory[]
+
+  @@map("b_category")
+}
+
+model BTag {
+  tagId          Int       @id @default(autoincrement()) @map("tag_id")
+  tagName        String?   @map("tag_name") @db.VarChar(100)
+  tagDescription String?   @map("tag_description") @db.VarChar(255)
+  tagFlag        Int       @default(0) @map("tag_flag")
+  tagTime        DateTime? @map("tag_time")
+
+  blogs BBlogTag[]
+
+  @@map("b_tag")
+}
+
+model BComment {
+  commentId         Int       @id @default(autoincrement()) @map("comment_id")
+  blogId            Int?      @map("blog_id")
+  type              Int?
+  content           String?   @db.Text
+  fromUid           String?   @map("from_uid") @db.VarChar(50)
+  fromNickname      String?   @map("from_nickname") @db.VarChar(100)
+  fromIcon          String?   @map("from_icon") @db.VarChar(255)
+  commentCreatetime DateTime? @map("comment_createTime")
+  commentVerify     Int?      @default(1) @map("comment_verify")
+  commentFromIp     String?   @map("comment_from_ip") @db.VarChar(50)
+
+  blog    BBlog?   @relation(fields: [blogId], references: [blogId])
+  replies BReply[]
+
+  @@map("b_comment")
+}
+
+model BReply {
+  replyId         Int       @id @default(autoincrement()) @map("reply_id")
+  commentId       Int?      @map("comment_id")
+  toId            Int?      @map("to_id")
+  toUserId        Int?      @map("to_user_id")
+  toNickname      String?   @map("to_nickname") @db.VarChar(100)
+  replyType       Int?      @map("reply_type")
+  replyContent    String?   @map("reply_content") @db.Text
+  fromUid         Int?      @map("from_uid")
+  fromNickname    String?   @map("from_nickname") @db.VarChar(100)
+  fromIcon        String?   @map("from_icon") @db.VarChar(255)
+  replyCreatetime DateTime? @map("reply_createTime")
+  replyVerify     Int?      @default(1) @map("reply_verify")
+  replyFromIp     String?   @map("reply_from_ip") @db.VarChar(50)
+
+  comment BComment? @relation(fields: [commentId], references: [commentId])
+
+  @@map("b_reply")
+}
+
+model BRole {
+  roleId       Int    @id @default(autoincrement()) @map("role_id")
+  role         String? @db.VarChar(50)
+  completeName String? @map("complete_name") @db.VarChar(100)
+
+  permissions BRolePermission[]
+  users       BUserRole[]
+
+  @@map("b_role")
+}
+
+model BPermission {
+  permissionId   Int     @id @default(autoincrement()) @map("permission_id")
+  permission     String? @db.VarChar(100)
+  permissionUrl  String? @map("permission_url") @db.VarChar(255)
+  permissionName String? @map("permission_name") @db.VarChar(100)
+
+  roles BRolePermission[]
+
+  @@map("b_permission")
+}
+
+model BUserRole {
+  userRoleId Int    @id @default(autoincrement()) @map("user_role_id")
+  userId     String? @map("user_id") @db.VarChar(36)
+  roleId     Int?   @map("role_id")
+
+  user BUser? @relation(fields: [userId], references: [id])
+  role BRole? @relation(fields: [roleId], references: [roleId])
+
+  @@map("b_user_role")
+}
+
+model BRolePermission {
+  roleId       Int @map("role_id")
+  permissionId Int @map("permission_id")
+
+  role       BRole       @relation(fields: [roleId], references: [roleId])
+  permission BPermission @relation(fields: [permissionId], references: [permissionId])
+
+  @@id([roleId, permissionId])
+  @@map("b_role_permission")
+}
+
+model BBlogCategory {
+  blogCategoryId Int @id @default(autoincrement()) @map("blog_category_id")
+  blogId         Int? @map("blog_id")
+  categoryId     Int? @map("category_id")
+
+  blog     BBlog?     @relation(fields: [blogId], references: [blogId])
+  category BCategory? @relation(fields: [categoryId], references: [categoryId])
+
+  @@map("b_blog_category")
+}
+
+model BBlogTag {
+  blogTagId Int @id @default(autoincrement()) @map("blog_tag_id")
+  blogId    Int? @map("blog_id")
+  tagId     Int? @map("tag_id")
+
+  blog BBlog? @relation(fields: [blogId], references: [blogId])
+  tag  BTag?  @relation(fields: [tagId], references: [tagId])
+
+  @@map("b_blog_tag")
+}

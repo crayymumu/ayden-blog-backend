@@ -88,7 +88,7 @@ export const TimeOffList = (props: Props) => {
 
   return (
     <Frame
-      sx={(theme) => ({
+      sx={(_theme) => ({
         maxHeight: "362px",
         paddingBottom: 0,
         position: "relative",
@@ -205,7 +205,10 @@ export const TimeOffList = (props: Props) => {
 const ListItem = ({
   timeOff,
   type,
-}: { timeOff: TimeOff; type: Props["type"] }) => {
+}: {
+  timeOff: TimeOff;
+  type: Props["type"];
+}) => {
   const { mutateAsync: timeOffCancel } = useDelete<TimeOff>();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -351,8 +354,8 @@ const ListItem = ({
       >
         <Button
           variant="text"
-          onClick={async () => {
-            await timeOffCancel({
+          onClick={() => {
+            void timeOffCancel({
               resource: "time-offs",
               id: timeOff.id,
               invalidates: ["all"],

@@ -28,7 +28,7 @@ type Props = {
   onChange?: (date: string | null) => void;
   loading?: boolean;
   error?: string;
-  datePickerProps?: DatePickerProps<any>;
+  datePickerProps?: DatePickerProps<dayjs.Dayjs>;
 };
 
 export const InputDate = forwardRef<HTMLDivElement, Props>(
@@ -110,7 +110,7 @@ export const InputDate = forwardRef<HTMLDivElement, Props>(
               ref={ref}
               onClose={props.onBlur}
               value={props.value ? dayjs(props.value) : null}
-              onChange={(value) => {
+              onChange={(value: dayjs.Dayjs | null) => {
                 const date = value?.format("MM.DD.YYYY") || null;
                 props.onChange?.(date);
               }}

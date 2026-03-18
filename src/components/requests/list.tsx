@@ -117,7 +117,7 @@ export const RequestsList = (props: Props) => {
 const SkeletonList = () => {
   return (
     <>
-      {[...Array(6)].map((_, index) => (
+      {Array.from({ length: 6 }, (_, index) => (
         <Box
           key={index}
           sx={(theme) => ({

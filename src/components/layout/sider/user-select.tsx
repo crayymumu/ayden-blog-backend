@@ -101,7 +101,7 @@ export const UserSelect = () => {
       email: props.email,
       redirectTo: pathname,
     });
-    queryClient.resetQueries();
+    void queryClient.resetQueries();
   };
 
   const selected = currentEmployee?.id || null;
@@ -215,7 +215,7 @@ export const UserSelect = () => {
                 },
               }}
               onClick={() => {
-                handleChange(manager);
+                void handleChange(manager);
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -255,7 +255,7 @@ export const UserSelect = () => {
               key={employee.id}
               value={employee.id}
               onClick={() => {
-                handleChange(employee);
+                void handleChange(employee);
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>

@@ -103,7 +103,7 @@ export const TimeOffRequestModal = ({
     });
 
     onSuccess?.();
-    invalidate({
+    void invalidate({
       resource: "employees",
       invalidates: ["all"],
     });
@@ -137,7 +137,7 @@ export const TimeOffRequestModal = ({
                 backgroundColor: (theme) => theme.palette.error.light,
               }}
               startIcon={<ThumbsDownIcon />}
-              onClick={() => handleSubmit(TimeOffStatus.REJECTED)}
+              onClick={() => void handleSubmit(TimeOffStatus.REJECTED)}
             >
               Decline
             </Button>
@@ -145,7 +145,7 @@ export const TimeOffRequestModal = ({
               sx={{
                 backgroundColor: (theme) => theme.palette.success.light,
               }}
-              onClick={() => handleSubmit(TimeOffStatus.APPROVED)}
+              onClick={() => void handleSubmit(TimeOffStatus.APPROVED)}
               startIcon={<ThumbsUpIcon />}
             >
               Accept
@@ -359,7 +359,11 @@ const InfoRow = ({
   label,
   value,
   loading,
-}: { label: ReactNode; value: ReactNode; loading: boolean }) => {
+}: {
+  label: ReactNode;
+  value: ReactNode;
+  loading: boolean;
+}) => {
   return (
     <Box
       sx={{

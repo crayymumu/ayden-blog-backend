@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { useGo, useInfiniteList } from "@refinedev/core";
 import { Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
@@ -91,7 +91,7 @@ const TimeOffsList = () => {
         loading={timeOffsLoading}
         dataLength={timeOffs.length}
         hasMore={timeOffsHasNextPage || false}
-        next={timeOffsFetchNextPage}
+        next={() => void timeOffsFetchNextPage()}
         scrollableTarget="scrollableDiv-timeOffs"
         noDataText="No time off requests right now."
         noDataIcon={<NoTimeOffIcon />}

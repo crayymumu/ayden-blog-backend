@@ -16,7 +16,15 @@ type Props = {
 } & DateRangeCalendarProps<PickerValidDate>;
 
 export const InputDateStartsEnds = forwardRef<HTMLDivElement, Props>(
-  ({ error, availableAnnualDays, requestedDays, ...props }, ref) => {
+  (
+    {
+      error,
+      availableAnnualDays: _availableAnnualDays,
+      requestedDays: _requestedDays,
+      ...props
+    },
+    ref,
+  ) => {
     const startsAt = props.value?.[0];
     const endsAt = props.value?.[1];
 

@@ -40,7 +40,7 @@ import { queryClient } from "@/providers/query-client";
 import { dataProvider } from "@/providers/data";
 import { blogDataProvider } from "@/providers/blog-data-provider";
 
-import { RequestsIcon, TimeOffIcon } from "@/icons";
+import { RequestsIcon, TimeOffIcon, BookIcon } from "@/icons";
 
 import { Role } from "@/types";
 
@@ -98,7 +98,7 @@ const App: React.FC = () => {
                 name: "blog",
                 meta: {
                   scope: Role.MANAGER,
-                  label: "Blog"
+                  label: "Blog",
                 },
               },
               {
@@ -109,7 +109,9 @@ const App: React.FC = () => {
                 show: "/blog/posts/:id",
                 meta: {
                   parent: "blog",
+                  scope: Role.MANAGER,
                   label: "博客管理",
+                  icon: <BookIcon />,
                   dataProviderName: "blog",
                 },
               },
@@ -120,6 +122,7 @@ const App: React.FC = () => {
                 edit: "/blog/categories/:id/edit",
                 meta: {
                   parent: "blog",
+                  scope: Role.MANAGER,
                   label: "Categories",
                   hide: true,
                   dataProviderName: "blog",
@@ -132,6 +135,7 @@ const App: React.FC = () => {
                 edit: "/blog/tags/:id/edit",
                 meta: {
                   parent: "blog",
+                  scope: Role.MANAGER,
                   label: "Tags",
                   hide: true,
                   dataProviderName: "blog",

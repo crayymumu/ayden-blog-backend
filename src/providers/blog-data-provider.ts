@@ -1,197 +1,267 @@
+import ky from "ky";
 import type { DataProvider } from "@refinedev/core";
 import type { Blog, Category, Tag } from "@/types";
+import { BLOG_API_URL } from "@/utilities/constants";
 
-const categories: Category[] = [
-  { id: 1, name: "Java", time: "2026-03-12 07:21:41", description: "Java后端开发相关技术文章", flag: 1 },
-  { id: 2, name: "前端", time: "2026-03-12 07:21:41", description: "前端开发技术与框架", flag: 1 },
-  { id: 3, name: "数据库", time: "2026-03-12 07:21:41", description: "数据库原理与优化", flag: 1 },
-  { id: 4, name: "DevOps", time: "2026-03-12 07:21:41", description: "运维与持续集成", flag: 1 },
-  { id: 5, name: "算法", time: "2026-03-12 07:21:41", description: "数据结构与算法", flag: 1 },
-];
+interface ApiResult<T> {
+  code: number;
+  message: string;
+  data?: T;
+}
 
-const tags: Tag[] = [
-  { id: 1, name: "Spring", description: "Spring生态相关", flag: 1, time: "2026-03-12 07:21:41" },
-  { id: 2, name: "MySQL", description: "MySQL数据库", flag: 1, time: "2026-03-12 07:21:41" },
-  { id: 3, name: "Redis", description: "Redis缓存", flag: 1, time: "2026-03-12 07:21:41" },
-  { id: 4, name: "Docker", description: "容器化技术", flag: 1, time: "2026-03-12 07:21:41" },
-  { id: 5, name: "Vue", description: "Vue前端框架", flag: 1, time: "2026-03-12 07:21:41" },
-];
+interface ApiPageData<T> {
+  list: T[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+  pages: number;
+}
 
-const blogs: Blog[] = [
-  {
-    id: 1,
-    title: "深入理解Java虚拟机内存模型",
-    abstract: "本文深入探讨JVM内存结构，包括堆、栈、方法区的工作原理，帮助开发者理解Java程序的运行机制。",
-    readCount: 2539,
-    score: 18,
-    source: 0,
-    level: 0,
-    password: null,
-    author: 1,
-    updateTime: "2025-10-16 11:35:19",
-    createTime: "2025-10-11 21:41:13",
-    flag: 0,
-    mdContent: "## 概述\n\n本文将详细介绍相关技术原理。",
-    content: "<div>## 概述<br><br>本文将详细介绍相关技术原理。</div>",
-    categories: [categories[0]],
-    tags: [tags[0], tags[1]],
-  },
-  {
-    id: 2,
-    title: "Spring Boot自动配置原理剖析",
-    abstract: "详细分析Spring Boot的@EnableAutoConfiguration注解实现原理，揭秘条件装配的核心逻辑。",
-    readCount: 1265,
-    score: 18,
-    source: 0,
-    level: 0,
-    password: null,
-    author: 1,
-    updateTime: "2026-01-01 01:25:43",
-    createTime: "2025-12-28 19:23:13",
-    flag: 0,
-    mdContent: "## 引言\n\n在日常开发中，我们经常遇到这类问题...",
-    content: "<div>## 引言<br><br>在日常开发中，我们经常遇到这类问题...</div>",
-    categories: [categories[0]],
-    tags: [tags[0]],
-  },
-  {
-    id: 3,
-    title: "MySQL索引优化实战指南",
-    abstract: "从B+树原理出发，讲解MySQL索引的创建策略、执行计划分析以及常见的索引失效场景。",
-    readCount: 1239,
-    score: 75,
-    source: 0,
-    level: 0,
-    password: null,
-    author: 1,
-    updateTime: "2025-07-16 21:06:14",
-    createTime: "2025-07-14 03:01:42",
-    flag: 0,
-    mdContent: "## 背景\n\n随着业务发展，性能优化变得越来越重要...",
-    content: "<div>## 背景<br><br>随着业务发展，性能优化变得越来越重要...</div>",
-    categories: [categories[2]],
-    tags: [tags[1]],
-  },
-  {
-    id: 4,
-    title: "React Hooks最佳实践总结",
-    abstract: "总结useState、useEffect、useContext等核心Hooks的使用技巧，以及自定义Hook的最佳实践。",
-    readCount: 1857,
-    score: 91,
-    source: 0,
-    level: 0,
-    password: null,
-    author: 1,
-    updateTime: "2025-08-12 02:40:51",
-    createTime: "2025-08-11 20:10:54",
-    flag: 0,
-    mdContent: "## 概述\n\n本文将详细介绍相关技术原理。",
-    content: "<div>## 概述<br><br>本文将详细介绍相关技术原理。</div>",
-    categories: [categories[1]],
-    tags: [tags[4]],
-  },
-  {
-    id: 5,
-    title: "Docker容器化部署完整教程",
-    abstract: "从Dockerfile编写到docker-compose编排，手把手教你完成应用的容器化部署流程。",
-    readCount: 4808,
-    score: 72,
-    source: 0,
-    level: 0,
-    password: null,
-    author: 1,
-    updateTime: "2025-10-03 19:49:40",
-    createTime: "2025-10-03 01:09:09",
-    flag: 0,
-    mdContent: "## 引言\n\n在日常开发中，我们经常遇到这类问题...",
-    content: "<div>## 引言<br><br>在日常开发中，我们经常遇到这类问题...</div>",
-    categories: [categories[3]],
-    tags: [tags[3]],
-  },
-];
+interface ApiBlog {
+  blogId: number;
+  blogTitle: string | null;
+  blogAbstract: string | null;
+  blogReadcount: number;
+  blogScore: number;
+  blogSource: number | null;
+  blogLevel: number;
+  blogPassword: string | null;
+  blogAuthor: string | null;
+  blogUpdatetime: string | null;
+  blogCreatetime: string | null;
+  blogFlag: number;
+  blogMdcontent: string | null;
+  blogContent: string | null;
+  tags?: { tag: ApiTag }[];
+  categories?: { category: ApiCategory }[];
+}
 
-type DataStore = {
-  blogs: Blog[];
-  categories: Category[];
-  tags: Tag[];
+interface ApiCategory {
+  categoryId: number;
+  categoryName: string | null;
+  categoryTime: string | null;
+  categoryDescription: string | null;
+  categoryFlag: number;
+}
+
+interface ApiTag {
+  tagId: number;
+  tagName: string | null;
+  tagDescription: string | null;
+  tagFlag: number;
+  tagTime: string | null;
+}
+
+const api = ky.create({ prefixUrl: BLOG_API_URL });
+
+function mapBlog(raw: ApiBlog): Blog {
+  return {
+    id: raw.blogId,
+    title: raw.blogTitle ?? "",
+    abstract: raw.blogAbstract ?? "",
+    readCount: raw.blogReadcount,
+    score: raw.blogScore,
+    source: raw.blogSource ?? 0,
+    level: raw.blogLevel,
+    password: raw.blogPassword,
+    author: raw.blogAuthor as unknown as number,
+    updateTime: raw.blogUpdatetime ?? "",
+    createTime: raw.blogCreatetime ?? "",
+    flag: raw.blogFlag,
+    mdContent: raw.blogMdcontent ?? "",
+    content: raw.blogContent ?? "",
+    categories: raw.categories?.map((c) => mapCategory(c.category)),
+    tags: raw.tags?.map((t) => mapTag(t.tag)),
+  };
+}
+
+function mapCategory(raw: ApiCategory): Category {
+  return {
+    id: raw.categoryId,
+    name: raw.categoryName ?? "",
+    time: raw.categoryTime ?? "",
+    description: raw.categoryDescription ?? "",
+    flag: raw.categoryFlag,
+  };
+}
+
+function mapTag(raw: ApiTag): Tag {
+  return {
+    id: raw.tagId,
+    name: raw.tagName ?? "",
+    description: raw.tagDescription ?? "",
+    flag: raw.tagFlag,
+    time: raw.tagTime ?? "",
+  };
+}
+
+function toBlogCreateDto(values: Record<string, unknown>) {
+  const cats = values.categories as Category[] | undefined;
+  const tags = values.tags as Tag[] | undefined;
+  return {
+    blogTitle: values.title as string | undefined,
+    blogAbstract: values.abstract as string | undefined,
+    blogSource: values.source as number | undefined,
+    blogLevel: values.level as number | undefined,
+    blogPassword: values.password as string | undefined,
+    blogAuthor: values.author as string | undefined,
+    blogFlag: values.flag as number | undefined,
+    blogMdcontent: values.mdContent as string | undefined,
+    blogContent: values.content as string | undefined,
+    categoryChoose: cats?.map((c) => c.id),
+    tagChoose: tags?.map((t) => t.id),
+  };
+}
+
+function toBlogUpdateDto(id: number, values: Record<string, unknown>) {
+  return { blogId: id, ...toBlogCreateDto(values) };
+}
+
+function toCategoryCreateDto(values: Record<string, unknown>) {
+  return {
+    categoryName: values.name as string | undefined,
+    categoryDescription: values.description as string | undefined,
+  };
+}
+
+function toCategoryUpdateDto(id: number, values: Record<string, unknown>) {
+  return {
+    categoryId: id,
+    categoryName: values.name as string | undefined,
+    categoryDescription: values.description as string | undefined,
+    categoryFlag: values.flag as number | undefined,
+  };
+}
+
+function toTagCreateDto(values: Record<string, unknown>) {
+  return {
+    tagName: values.name as string | undefined,
+    tagDescription: values.description as string | undefined,
+  };
+}
+
+function toTagUpdateDto(id: number, values: Record<string, unknown>) {
+  return {
+    tagId: id,
+    tagName: values.name as string | undefined,
+    tagDescription: values.description as string | undefined,
+    tagFlag: values.flag as number | undefined,
+  };
+}
+
+const listEndpoints: Record<string, string> = {
+  blogs: "blog/blogList",
+  categories: "category/list",
+  tags: "tag/list",
 };
 
-const store: DataStore = {
-  blogs: [...blogs],
-  categories: [...categories],
-  tags: [...tags],
+const singleEndpoints: Record<string, string> = {
+  blogs: "blog",
+  categories: "category",
+  tags: "tag",
 };
-
-let nextId = { blogs: 6, categories: 6, tags: 6 };
 
 export const blogDataProvider: DataProvider = {
-  getList: async ({ resource, pagination, sorters, filters }) => {
-    const data = store[resource as keyof DataStore] ?? [];
-    const current = pagination?.current ?? 1;
+  getList: async ({ resource, pagination }) => {
+    const endpoint = listEndpoints[resource] ?? resource;
+    const current = pagination?.currentPage ?? 1;
     const pageSize = pagination?.pageSize ?? 10;
 
-    let result = [...data];
+    const res = await api
+      .post(endpoint, { json: { pageIndex: current, pageSize } })
+      .json<ApiResult<ApiPageData<ApiBlog | ApiCategory | ApiTag>>>();
 
-    if (sorters && sorters.length > 0) {
-      const { field, order } = sorters[0];
-      result.sort((a, b) => {
-        const aVal = a[field as keyof typeof a];
-        const bVal = b[field as keyof typeof b];
-        if (aVal < bVal) return order === "asc" ? -1 : 1;
-        if (aVal > bVal) return order === "asc" ? 1 : -1;
-        return 0;
-      });
+    const page = res.data!;
+    let data: (Blog | Category | Tag)[];
+
+    if (resource === "blogs") {
+      data = (page.list as ApiBlog[]).map(mapBlog);
+    } else if (resource === "categories") {
+      data = (page.list as ApiCategory[]).map(mapCategory);
+    } else {
+      data = (page.list as ApiTag[]).map(mapTag);
     }
 
-    const total = result.length;
-    const start = (current - 1) * pageSize;
-    const paged = pagination?.mode === "off" ? result : result.slice(start, start + pageSize);
-
-    return { data: paged, total };
+    return { data, total: page.total };
   },
 
   getOne: async ({ resource, id }) => {
-    const data = store[resource as keyof DataStore] ?? [];
-    const record = data.find((item) => item.id === Number(id));
-    if (!record) throw new Error("Record not found");
-    return { data: record };
+    const base = singleEndpoints[resource] ?? resource;
+
+    const res = await api
+      .get(`${base}/${id}`)
+      .json<ApiResult<ApiBlog | ApiCategory | ApiTag>>();
+
+    let data: Blog | Category | Tag;
+
+    if (resource === "blogs") {
+      data = mapBlog(res.data as ApiBlog);
+    } else if (resource === "categories") {
+      data = mapCategory(res.data as ApiCategory);
+    } else {
+      data = mapTag(res.data as ApiTag);
+    }
+
+    return { data };
   },
 
   create: async ({ resource, variables }) => {
-    const data = store[resource as keyof DataStore] as any[];
-    const id = nextId[resource as keyof typeof nextId]++;
-    const now = new Date().toISOString().replace("T", " ").slice(0, 19);
-    const newRecord = {
-      id,
-      ...variables,
-      ...(resource === "blogs" && { createTime: now, updateTime: now, readCount: 0, score: 0 }),
-      ...(resource === "categories" && { time: now }),
-      ...(resource === "tags" && { time: now }),
-    };
-    data.push(newRecord);
-    return { data: newRecord };
+    const base = singleEndpoints[resource] ?? resource;
+    const vars = variables as Record<string, unknown>;
+
+    let json: unknown;
+    if (resource === "blogs") {
+      json = toBlogCreateDto(vars);
+    } else if (resource === "categories") {
+      json = toCategoryCreateDto(vars);
+    } else {
+      json = toTagCreateDto(vars);
+    }
+
+    const res = await api
+      .post(base, { json })
+      .json<ApiResult<ApiBlog | ApiCategory | ApiTag>>();
+
+    let data: Blog | Category | Tag;
+    if (resource === "blogs" && res.data) {
+      data = mapBlog(res.data as ApiBlog);
+    } else if (resource === "categories" && res.data) {
+      data = mapCategory(res.data as ApiCategory);
+    } else if (res.data) {
+      data = mapTag(res.data as ApiTag);
+    } else {
+      data = { id: 0 } as Blog;
+    }
+
+    return { data };
   },
 
   update: async ({ resource, id, variables }) => {
-    const data = store[resource as keyof DataStore] as any[];
-    const index = data.findIndex((item) => item.id === Number(id));
-    if (index === -1) throw new Error("Record not found");
-    const now = new Date().toISOString().replace("T", " ").slice(0, 19);
-    data[index] = {
-      ...data[index],
-      ...variables,
-      ...(resource === "blogs" && { updateTime: now }),
-    };
-    return { data: data[index] };
+    const base = singleEndpoints[resource] ?? resource;
+    const numId = Number(id);
+    const vars = variables as Record<string, unknown>;
+
+    let json: unknown;
+    if (resource === "blogs") {
+      json = toBlogUpdateDto(numId, vars);
+    } else if (resource === "categories") {
+      json = toCategoryUpdateDto(numId, vars);
+    } else {
+      json = toTagUpdateDto(numId, vars);
+    }
+
+    await api.put(base, { json }).json<ApiResult<unknown>>();
+
+    return { data: { id: numId, ...vars } as Blog | Category | Tag };
   },
 
   deleteOne: async ({ resource, id }) => {
-    const data = store[resource as keyof DataStore] as any[];
-    const index = data.findIndex((item) => item.id === Number(id));
-    if (index === -1) throw new Error("Record not found");
-    const [deleted] = data.splice(index, 1);
-    return { data: deleted };
+    const base = singleEndpoints[resource] ?? resource;
+
+    await api.delete(`${base}/${id}`).json<ApiResult<unknown>>();
+
+    return { data: { id: Number(id) } as Blog | Category | Tag };
   },
 
-  getApiUrl: () => "",
+  getApiUrl: () => BLOG_API_URL,
 };

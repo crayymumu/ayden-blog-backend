@@ -22,7 +22,7 @@ export const Menu = () => {
           paddingY: "24px",
         }}
       >
-        {menuItems.map((item, i) => {
+        {menuItems.map((item, _i) => {
           return (
             <CanAccess
               key={item.key}
@@ -105,7 +105,7 @@ const MenuItem = ({
           sx={{
             minWidth: "24px",
             color: isSelected ? "primary.main" : "text.secondary",
-            strokeWidth: isSelected ? "1.5px" : "1px",
+            strokeWidth: isSelected ? "2px" : "1.5px",
             "& svg > g": { strokeWidth: isSelected ? "1.5px" : "1px" },
           }}
         >

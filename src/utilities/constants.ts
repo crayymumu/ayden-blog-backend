@@ -6,3 +6,7 @@ export const ACCESS_TOKEN_KEY = "accessToken";
 export const REFRESH_TOKEN_KEY = "refreshToken";
 
 export const COMPANY_NAME = "Dunder Mifflin - Scranton";
+
+export const BLOG_API_URL =
+  (import.meta.env.VITE_BLOG_API_URL as string | undefined) ??
+  "http://localhost:3000";

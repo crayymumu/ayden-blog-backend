@@ -94,7 +94,7 @@ export const PageEmployeeTimeOffsCreate = () => {
 
           <Box
             component="form"
-            onSubmit={handleSubmit(onFinishHandler)}
+            onSubmit={(e) => void handleSubmit(onFinishHandler)(e)}
             sx={{
               display: "flex",
               flexDirection: "column",

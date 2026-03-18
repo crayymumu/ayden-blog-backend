@@ -8,26 +8,35 @@ import {
   Autocomplete,
   MenuItem,
   Select,
-  Typography,
+  FormControl,
+  InputLabel,
+  Paper,
 } from "@mui/material";
 import { PageHeader } from "@/components/layout/page-header";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { Blog, Category, Tag } from "@/types";
 
-type FormValues = Omit<Blog, "id" | "createTime" | "updateTime" | "readCount" | "score">;
+type FormValues = Omit<
+  Blog,
+  "id" | "createTime" | "updateTime" | "readCount" | "score"
+>;
 
 export const PageBlogCreate = () => {
-  const { data: categoriesData } = useList<Category>({
+  const { data: categoriesRaw } = useList<Category>({
     resource: "categories",
     meta: { dataProviderName: "blog" },
     pagination: { mode: "off" },
   });
+  const categoryOptions: Category[] =
+    (categoriesRaw as { data: Category[] } | undefined)?.data ?? [];
 
-  const { data: tagsData } = useList<Tag>({
+  const { data: tagsRaw } = useList<Tag>({
     resource: "tags",
     meta: { dataProviderName: "blog" },
     pagination: { mode: "off" },
   });
+  const tagOptions: Tag[] =
+    (tagsRaw as { data: Tag[] } | undefined)?.data ?? [];
 
   const {
     refineCore: { formLoading, onFinish },
@@ -62,10 +71,19 @@ export const PageBlogCreate = () => {
       <Box>
         <PageHeader title="新建博客" showListButton showDivider />
 
-        <Box
+        <Paper
           component="form"
-          onSubmit={handleSubmit(onFinishHandler)}
-          sx={{ display: "flex", flexDirection: "column", gap: "24px", mt: "24px", maxWidth: 800 }}
+          variant="outlined"
+          onSubmit={(e: React.FormEvent) => void handleSubmit(onFinishHandler)(e)}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            mt: "24px",
+            p: 3,
+            borderRadius: 2,
+            maxWidth: 800,
+          }}
         >
           <Controller
             name="title"
@@ -95,39 +113,39 @@ export const PageBlogCreate = () => {
               name="source"
               control={control}
               render={({ field }) => (
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ mb: 1 }}>来源</Typography>
-                  <Select {...field} fullWidth size="small">
+                <FormControl fullWidth sx={{ flex: 1 }}>
+                  <InputLabel>来源</InputLabel>
+                  <Select {...field} label="来源">
                     <MenuItem value={0}>原创</MenuItem>
                     <MenuItem value={1}>转载</MenuItem>
                   </Select>
-                </Box>
+                </FormControl>
               )}
             />
             <Controller
               name="level"
               control={control}
               render={({ field }) => (
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ mb: 1 }}>等级</Typography>
-                  <Select {...field} fullWidth size="small">
+                <FormControl fullWidth sx={{ flex: 1 }}>
+                  <InputLabel>等级</InputLabel>
+                  <Select {...field} label="等级">
                     <MenuItem value={0}>普通</MenuItem>
                     <MenuItem value={1}>置顶</MenuItem>
                   </Select>
-                </Box>
+                </FormControl>
               )}
             />
             <Controller
               name="flag"
               control={control}
               render={({ field }) => (
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ mb: 1 }}>状态</Typography>
-                  <Select {...field} fullWidth size="small">
+                <FormControl fullWidth sx={{ flex: 1 }}>
+                  <InputLabel>状态</InputLabel>
+                  <Select {...field} label="状态">
                     <MenuItem value={0}>正常</MenuItem>
                     <MenuItem value={1}>禁用</MenuItem>
                   </Select>
-                </Box>
+                </FormControl>
               )}
             />
           </Box>
@@ -146,7 +164,7 @@ export const PageBlogCreate = () => {
             render={({ field }) => (
               <Autocomplete
                 multiple
-                options={categoriesData?.data ?? []}
+                options={categoryOptions}
                 getOptionLabel={(opt) => opt.name}
                 value={field.value ?? []}
                 onChange={(_, v) => field.onChange(v)}
@@ -161,7 +179,7 @@ export const PageBlogCreate = () => {
             render={({ field }) => (
               <Autocomplete
                 multiple
-                options={tagsData?.data ?? []}
+                options={tagOptions}
                 getOptionLabel={(opt) => opt.name}
                 value={field.value ?? []}
                 onChange={(_, v) => field.onChange(v)}
@@ -174,7 +192,13 @@ export const PageBlogCreate = () => {
             name="mdContent"
             control={control}
             render={({ field }) => (
-              <TextField {...field} label="Markdown 内容" multiline rows={10} fullWidth />
+              <TextField
+                {...field}
+                label="Markdown 内容"
+                multiline
+                rows={10}
+                fullWidth
+              />
             )}
           />
 
@@ -182,14 +206,22 @@ export const PageBlogCreate = () => {
             name="content"
             control={control}
             render={({ field }) => (
-              <TextField {...field} label="HTML 内容" multiline rows={6} fullWidth />
+              <TextField
+                {...field}
+                label="HTML 内容"
+                multiline
+                rows={6}
+                fullWidth
+              />
             )}
           />
 
-          <Button variant="contained" size="large" type="submit">
-            提交
-          </Button>
-        </Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button variant="contained" size="large" type="submit">
+              提交
+            </Button>
+          </Box>
+        </Paper>
       </Box>
     </LoadingOverlay>
   );

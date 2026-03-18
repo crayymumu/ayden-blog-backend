@@ -6,11 +6,14 @@ import { kyInstance } from "../data";
 export const authProvider: AuthProvider = {
   login: async ({ email, redirectTo }) => {
     try {
-      const { accessToken, refreshToken, user } =
-        await kyInstance<ResponseLogin>("login", {
-          method: "post",
-          body: JSON.stringify({ email }),
-        }).json();
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion -- ky returns any, JSON parse needs cast */
+      const response = await kyInstance("login", {
+        method: "post",
+        body: JSON.stringify({ email }),
+      });
+      const result = (await response.json()) as ResponseLogin;
+      /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion */
+      const { accessToken, refreshToken, user } = result;
 
       localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
       localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
@@ -18,9 +21,9 @@ export const authProvider: AuthProvider = {
 
       return {
         success: true,
-        redirectTo,
+        redirectTo: redirectTo as string | undefined,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: {
@@ -43,7 +46,7 @@ export const authProvider: AuthProvider = {
       redirectTo: "/login",
     };
   },
-  onError: async (error) => {
+  onError: async (error: { response?: { status?: number } }) => {
     if (error.response?.status === 401) {
       return {
         logout: true,
@@ -75,7 +78,7 @@ export const authProvider: AuthProvider = {
       };
     }
 
-    const parsedUser = JSON.parse(user);
+    const parsedUser = JSON.parse(user) as { role?: string };
 
     return {
       role: parsedUser.role,

@@ -4,7 +4,7 @@ import GlobalStyles from "@mui/material/GlobalStyles";
 import { ThemeProvider as MuiThemeProvider, createTheme } from "@mui/material";
 import type { ThemeOptions } from "@mui/material/styles";
 import { deepmerge } from "@mui/utils";
-import { ChevronDownIcon } from "@/icons/chevron-down";
+import { ChevronDownIcon } from "@/icons/sources/chevron-down";
 import { Role } from "@/types";
 import { indigo, red, slate, teal } from "./colors";
 
@@ -267,6 +267,25 @@ const themeOptionsBase: ThemeOptions = {
       styleOverrides: {
         root: {
           color: `${slate[900]} !important`,
+        },
+      },
+    },
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          height: "30px",
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          height: "30px",
+          lineHeight: "30px",
+          padding: "8px 12px",
+          "& p": {
+            fontSize: "14px",
+          },
         },
       },
     },

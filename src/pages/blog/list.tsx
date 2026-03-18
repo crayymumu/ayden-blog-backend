@@ -1,7 +1,23 @@
-import { useGo } from "@refinedev/core";
-import { useDataGrid, EditButton, ShowButton, DeleteButton } from "@refinedev/mui";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Button, Chip, Skeleton, Stack } from "@mui/material";
+import { useState } from "react";
+import { useGo, useList, useDelete } from "@refinedev/core";
+import { ViewIcon, pencil as PencilIcon, DeleteIcon } from "@/icons/sources";
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/icons/sources";
 import { PageHeader } from "@/components/layout/page-header";
 import { Blog } from "@/types";
 import dayjs from "dayjs";
@@ -10,11 +26,10 @@ const TableSkeleton = () => {
   const headerWidths = [70, 200, 200, 80, 80, 160, 100, 180];
 
   return (
-    <Box
+    <Paper
+      variant="outlined"
       sx={{
-        backgroundColor: "white",
-        borderRadius: "4px",
-        border: "1px solid rgba(224, 224, 224, 1)",
+        borderRadius: 2,
         overflow: "hidden",
       }}
     >
@@ -35,30 +50,68 @@ const TableSkeleton = () => {
             variant="rectangular"
             width={w}
             height={14}
-            sx={{ borderRadius: "2px", flexShrink: i < 2 ? 0 : 1, flexGrow: i === 1 || i === 2 ? 1 : 0 }}
+            sx={{
+              borderRadius: "2px",
+              flexShrink: i < 2 ? 0 : 1,
+              flexGrow: i === 1 || i === 2 ? 1 : 0,
+            }}
           />
         ))}
       </Box>
-      {[...Array(8)].map((_, rowIdx) => (
+      {Array.from({ length: 8 }, (_, rowIdx) => (
         <Box
           key={rowIdx}
           sx={{
             display: "flex",
             alignItems: "center",
             height: 52,
-            borderBottom: rowIdx < 7 ? "1px solid rgba(224, 224, 224, 1)" : "none",
+            borderBottom:
+              rowIdx < 7 ? "1px solid rgba(224, 224, 224, 1)" : "none",
             px: 2,
             gap: 2,
             "&:hover": { backgroundColor: "rgba(0,0,0,0.02)" },
           }}
         >
-          <Skeleton variant="rectangular" width={40} height={14} sx={{ borderRadius: "2px", flexShrink: 0 }} />
-          <Skeleton variant="rectangular" height={14} sx={{ borderRadius: "2px", flex: 1, minWidth: 120 }} />
-          <Skeleton variant="rectangular" height={14} sx={{ borderRadius: "2px", flex: 1, minWidth: 100 }} />
-          <Skeleton variant="rectangular" width={50} height={14} sx={{ borderRadius: "2px", flexShrink: 0 }} />
-          <Skeleton variant="rectangular" width={50} height={14} sx={{ borderRadius: "2px", flexShrink: 0 }} />
-          <Skeleton variant="rectangular" width={120} height={14} sx={{ borderRadius: "2px", flexShrink: 0 }} />
-          <Skeleton variant="rounded" width={48} height={24} sx={{ flexShrink: 0 }} />
+          <Skeleton
+            variant="rectangular"
+            width={40}
+            height={14}
+            sx={{ borderRadius: "2px", flexShrink: 0 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            height={14}
+            sx={{ borderRadius: "2px", flex: 1, minWidth: 120 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            height={14}
+            sx={{ borderRadius: "2px", flex: 1, minWidth: 100 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={50}
+            height={14}
+            sx={{ borderRadius: "2px", flexShrink: 0 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={50}
+            height={14}
+            sx={{ borderRadius: "2px", flexShrink: 0 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={120}
+            height={14}
+            sx={{ borderRadius: "2px", flexShrink: 0 }}
+          />
+          <Skeleton
+            variant="rounded"
+            width={48}
+            height={24}
+            sx={{ flexShrink: 0 }}
+          />
           <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
             <Skeleton variant="circular" width={32} height={32} />
             <Skeleton variant="circular" width={32} height={32} />
@@ -77,73 +130,59 @@ const TableSkeleton = () => {
           gap: 2,
         }}
       >
-        <Skeleton variant="rectangular" width={100} height={14} sx={{ borderRadius: "2px" }} />
-        <Skeleton variant="rectangular" width={80} height={32} sx={{ borderRadius: "4px" }} />
+        <Skeleton
+          variant="rectangular"
+          width={100}
+          height={14}
+          sx={{ borderRadius: "2px" }}
+        />
+        <Skeleton
+          variant="rectangular"
+          width={80}
+          height={32}
+          sx={{ borderRadius: "4px" }}
+        />
         <Skeleton variant="circular" width={32} height={32} />
         <Skeleton variant="circular" width={32} height={32} />
       </Box>
-    </Box>
+    </Paper>
   );
+};
+
+const getPageNumbers = (current: number, total: number): number[] => {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i);
+  const pages: number[] = [0];
+  const start = Math.max(1, current - 1);
+  const end = Math.min(total - 2, current + 1);
+  if (start > 1) pages.push(-1);
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (end < total - 2) pages.push(-1);
+  pages.push(total - 1);
+  return pages;
 };
 
 export const PageBlogList = () => {
   const go = useGo();
+  const { mutate } = useDelete();
+  const [page, setPage] = useState(0);
+  const pageSize = 12;
 
-  const { dataGridProps } = useDataGrid<Blog>({
+  const { result, query } = useList<Blog>({
     resource: "blogs",
     meta: { dataProviderName: "blog" },
+    pagination: { pageSize, currentPage: page + 1 },
   });
 
-  const isLoading = dataGridProps.loading;
+  const isLoading = query.isLoading;
+  const blogs = result?.data ?? [];
+  const total = result?.total ?? 0;
+  const totalPages = Math.ceil(total / pageSize);
 
-  const columns: GridColDef<Blog>[] = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "title", headerName: "标题", flex: 1, minWidth: 200 },
-    {
-      field: "abstract",
-      headerName: "摘要",
-      flex: 1,
-      minWidth: 200,
-      renderCell: ({ value }) => (
-        <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-          {value}
-        </Box>
-      ),
-    },
-    { field: "readCount", headerName: "阅读", width: 80, type: "number" },
-    { field: "score", headerName: "评分", width: 80, type: "number" },
-    {
-      field: "createTime",
-      headerName: "创建时间",
-      width: 160,
-      renderCell: ({ value }) => dayjs(value).format("YYYY-MM-DD HH:mm"),
-    },
-    {
-      field: "flag",
-      headerName: "状态",
-      width: 100,
-      renderCell: ({ value }) => (
-        <Chip
-          label={value === 0 ? "正常" : "禁用"}
-          color={value === 0 ? "success" : "default"}
-          size="small"
-        />
-      ),
-    },
-    {
-      field: "actions",
-      headerName: "操作",
-      width: 180,
-      sortable: false,
-      renderCell: ({ row }) => (
-        <Stack direction="row" spacing={1}>
-          <ShowButton hideText recordItemId={row.id} resource="blogs" />
-          <EditButton hideText recordItemId={row.id} resource="blogs" />
-          <DeleteButton hideText recordItemId={row.id} resource="blogs" />
-        </Stack>
-      ),
-    },
-  ];
+  const headCellSx = {
+    fontWeight: "bold",
+    backgroundColor: "#fafafa",
+    whiteSpace: "nowrap" as const,
+  };
 
   return (
     <Box>
@@ -157,10 +196,7 @@ export const PageBlogList = () => {
             >
               分类管理
             </Button>
-            <Button
-              variant="outlined"
-              onClick={() => go({ to: "/blog/tags" })}
-            >
+            <Button variant="outlined" onClick={() => go({ to: "/blog/tags" })}>
               标签管理
             </Button>
             <Button
@@ -175,13 +211,154 @@ export const PageBlogList = () => {
       {isLoading ? (
         <TableSkeleton />
       ) : (
-        <DataGrid
-          {...dataGridProps}
-          columns={columns}
-          autoHeight
-          pageSizeOptions={[10, 25, 50]}
-          sx={{ backgroundColor: "white" }}
-        />
+        <Paper variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ ...headCellSx, width: 70 }}>序号</TableCell>
+                  <TableCell sx={headCellSx}>标题</TableCell>
+                  <TableCell sx={headCellSx}>摘要</TableCell>
+                  <TableCell sx={{ ...headCellSx, width: 80 }} align="right">
+                    阅读
+                  </TableCell>
+                  <TableCell sx={{ ...headCellSx, width: 80 }} align="right">
+                    评分
+                  </TableCell>
+                  <TableCell sx={{ ...headCellSx, width: 160 }}>
+                    创建时间
+                  </TableCell>
+                  <TableCell sx={{ ...headCellSx, width: 100 }}>状态</TableCell>
+                  <TableCell sx={{ ...headCellSx, width: 180 }}>操作</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {blogs.map((blog, blogIndex) => (
+                  <TableRow
+                    key={blog.id}
+                    hover
+                    sx={{
+                      "&:last-child td": { borderBottom: 0 },
+                    }}
+                  >
+                    <TableCell>{page * pageSize + blogIndex + 1}</TableCell>
+                    <TableCell>
+                      <Typography noWrap sx={{ maxWidth: 240 }}>
+                        {blog.title}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography noWrap sx={{ maxWidth: 240 }}>
+                        {blog.abstract}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">{blog.readCount}</TableCell>
+                    <TableCell align="right">{blog.score}</TableCell>
+                    <TableCell>
+                      {dayjs(blog.createTime).format("YYYY-MM-DD HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={blog.flag === 0 ? "正常" : "禁用"}
+                        color={blog.flag === 0 ? "success" : "default"}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Stack direction="row" spacing={1}>
+                        <IconButton
+                          size="small"
+                          onClick={() => go({ to: `/blog/posts/${blog.id}` })}
+                        >
+                          <ViewIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            go({ to: `/blog/posts/${blog.id}/edit` })
+                          }
+                        >
+                          <PencilIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            mutate({
+                              resource: "blogs",
+                              id: blog.id,
+                              meta: { dataProviderName: "blog" },
+                            })
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: 2,
+              py: 1,
+              borderTop: "1px solid rgba(224, 224, 224, 1)",
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              {total} 篇博客
+            </Typography>
+            {totalPages > 1 && (
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <IconButton
+                  size="small"
+                  disabled={page === 0}
+                  onClick={() => setPage(page - 1)}
+                >
+                  <ChevronLeftIcon />
+                </IconButton>
+                {getPageNumbers(page, totalPages).map((p, i) =>
+                  p === -1 ? (
+                    <Typography
+                      key={`e${i}`}
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ px: 0.5 }}
+                    >
+                      ...
+                    </Typography>
+                  ) : (
+                    <Button
+                      key={p}
+                      size="small"
+                      variant={p === page ? "contained" : "text"}
+                      onClick={() => setPage(p)}
+                      sx={{
+                        minWidth: 32,
+                        height: 32,
+                        borderRadius: 1,
+                        ...(p !== page && { color: "text.secondary" }),
+                      }}
+                    >
+                      {p + 1}
+                    </Button>
+                  ),
+                )}
+                <IconButton
+                  size="small"
+                  disabled={page >= totalPages - 1}
+                  onClick={() => setPage(page + 1)}
+                >
+                  <ChevronRightIcon />
+                </IconButton>
+              </Stack>
+            )}
+          </Box>
+        </Paper>
       )}
     </Box>
   );

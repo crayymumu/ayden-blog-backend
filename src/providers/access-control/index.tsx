@@ -12,10 +12,12 @@ export const accessControlProvider: AccessControlBindings = {
     },
   },
   can: async ({ params, action }) => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const user = JSON.parse(localStorage.getItem("user") || "null") as {
+      role?: string;
+    } | null;
     if (!user) return { can: false };
 
-    const scope = params?.resource?.meta?.scope;
+    const scope = params?.resource?.meta?.scope as string | undefined;
     // if the resource does not have a scope, it is not accessible
     if (!scope) return { can: false };
 
