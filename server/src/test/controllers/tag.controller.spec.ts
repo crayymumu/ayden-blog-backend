@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { TagController } from "../../tag/tag.controller";
-import { TagService } from "../../tag/tag.service";
+import { TagController } from "../../modules/tag/tag.controller";
+import { TagService } from "../../modules/tag/tag.service";
 
 const mockService = {
   create: jest.fn(),

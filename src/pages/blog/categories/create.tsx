@@ -46,7 +46,9 @@ export const PageCategoryCreate = () => {
         <Paper
           component="form"
           variant="outlined"
-          onSubmit={(e: React.FormEvent) => void handleSubmit(onFinishHandler)(e)}
+          onSubmit={(e: React.FormEvent) =>
+            void handleSubmit(onFinishHandler)(e)
+          }
           sx={{
             display: "flex",
             flexDirection: "column",

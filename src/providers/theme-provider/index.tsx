@@ -5,7 +5,6 @@ import { ThemeProvider as MuiThemeProvider, createTheme } from "@mui/material";
 import type { ThemeOptions } from "@mui/material/styles";
 import { deepmerge } from "@mui/utils";
 import { ChevronDownIcon } from "@/icons/sources/chevron-down";
-import { Role } from "@/types";
 import { indigo, red, slate, teal } from "./colors";
 
 const themeOptionsBase: ThemeOptions = {
@@ -350,22 +349,11 @@ const themeManager = createTheme(
 );
 
 type Props = PropsWithChildren<{
-  role?: Role;
+  theme?: "default" | "manager";
 }>;
 
-export const ThemeProvider = ({ children, role = Role.EMPLOYEE }: Props) => {
-  let selectedTheme = themeEmployee;
-
-  switch (role) {
-    case Role.EMPLOYEE:
-      selectedTheme = themeEmployee;
-      break;
-    case Role.MANAGER:
-      selectedTheme = themeManager;
-      break;
-    default:
-      selectedTheme = themeEmployee;
-  }
+export const ThemeProvider = ({ children, theme = "default" }: Props) => {
+  const selectedTheme = theme === "manager" ? themeManager : themeEmployee;
 
   return (
     <MuiThemeProvider theme={selectedTheme}>

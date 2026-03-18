@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BlogCategoryService } from "../../blog-category/blog-category.service";
+import { BlogCategoryService } from "../../modules/blog-category/blog-category.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import {
   CreateBlogCategoryDto,
   UpdateBlogCategoryDto,
-} from "../../blog-category/dto/blog-category.dto";
+} from "../../modules/blog-category/dto/blog-category.dto";
 
 const mockPrisma = {
   bBlogCategory: {

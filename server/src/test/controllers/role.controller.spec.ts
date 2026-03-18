@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { RoleController } from "../../role/role.controller";
-import { RoleService } from "../../role/role.service";
+import { RoleController } from "../../modules/role/role.controller";
+import { RoleService } from "../../modules/role/role.service";
 
 const mockRoleService = {
   create: jest.fn(),

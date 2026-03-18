@@ -1,6 +1,6 @@
 import type { AccessControlBindings } from "@refinedev/core";
-import { Role } from "@/types";
 import { keepPreviousData } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
 
 export const accessControlProvider: AccessControlBindings = {
   options: {
@@ -11,37 +11,9 @@ export const accessControlProvider: AccessControlBindings = {
       hideIfUnauthorized: true,
     },
   },
-  can: async ({ params, action }) => {
-    const user = JSON.parse(localStorage.getItem("user") || "null") as {
-      role?: string;
-    } | null;
-    if (!user) return { can: false };
-
-    const scope = params?.resource?.meta?.scope as string | undefined;
-    // if the resource does not have a scope, it is not accessible
-    if (!scope) return { can: false };
-
-    if (user.role === Role.MANAGER) {
-      return {
-        can: true,
-      };
-    }
-
-    if (action === "manager") {
-      return {
-        can: user.role === Role.MANAGER,
-      };
-    }
-
-    if (action === "employee") {
-      return {
-        can: user.role === Role.EMPLOYEE,
-      };
-    }
-
-    // users can only access resources if their role matches the resource scope
-    return {
-      can: user.role === scope,
-    };
+  can: async () => {
+    const { data } = await authClient.getSession();
+    if (!data?.session) return { can: false };
+    return { can: true };
   },
 };

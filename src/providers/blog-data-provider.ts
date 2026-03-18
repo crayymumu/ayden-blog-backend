@@ -52,7 +52,7 @@ interface ApiTag {
   tagTime: string | null;
 }
 
-const api = ky.create({ prefixUrl: BLOG_API_URL });
+const api = ky.create({ prefixUrl: BLOG_API_URL, credentials: "include" });
 
 function mapBlog(raw: ApiBlog): Blog {
   return {

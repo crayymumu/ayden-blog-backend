@@ -110,7 +110,12 @@ export const PageBlogShow = () => {
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                   {record.categories.map((cat) => (
-                    <Chip key={cat.id} label={cat.name} size="small" color="primary" />
+                    <Chip
+                      key={cat.id}
+                      label={cat.name}
+                      size="small"
+                      color="primary"
+                    />
                   ))}
                 </Stack>
               </Box>

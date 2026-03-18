@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BlogTagService } from "../../blog-tag/blog-tag.service";
+import { BlogTagService } from "../../modules/blog-tag/blog-tag.service";
 import { PrismaService } from "../../prisma/prisma.service";
 
 const mockPrisma = {

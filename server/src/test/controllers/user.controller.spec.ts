@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserController } from "../../user/user.controller";
-import { UserService } from "../../user/user.service";
+import { UserController } from "../../modules/user/user.controller";
+import { UserService } from "../../modules/user/user.service";
 
 const mockUserService = {
   create: jest.fn(),

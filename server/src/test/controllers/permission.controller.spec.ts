@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PermissionController } from "../../permission/permission.controller";
-import { PermissionService } from "../../permission/permission.service";
+import { PermissionController } from "../../modules/permission/permission.controller";
+import { PermissionService } from "../../modules/permission/permission.service";
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
-} from "../../permission/dto/permission.dto";
+} from "../../modules/permission/dto/permission.dto";
 
 const mockService = {
   create: jest.fn(),

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BlogCategoryController } from "../../blog-category/blog-category.controller";
-import { BlogCategoryService } from "../../blog-category/blog-category.service";
+import { BlogCategoryController } from "../../modules/blog-category/blog-category.controller";
+import { BlogCategoryService } from "../../modules/blog-category/blog-category.service";
 import {
   CreateBlogCategoryDto,
   UpdateBlogCategoryDto,
-} from "../../blog-category/dto/blog-category.dto";
+} from "../../modules/blog-category/dto/blog-category.dto";
 
 const mockService = {
   create: jest.fn(),

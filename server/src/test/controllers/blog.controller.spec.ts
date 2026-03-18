@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BlogController } from "../../blog/blog.controller";
-import { BlogService } from "../../blog/blog.service";
+import { BlogController } from "../../modules/blog/blog.controller";
+import { BlogService } from "../../modules/blog/blog.service";
 
 const mockBlogService = {
   create: jest.fn(),

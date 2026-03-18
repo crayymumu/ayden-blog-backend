@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserRoleService } from "../../user-role/user-role.service";
+import { UserRoleService } from "../../modules/user-role/user-role.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import {
   CreateUserRoleDto,
   UpdateUserRoleDto,
-} from "../../user-role/dto/user-role.dto";
+} from "../../modules/user-role/dto/user-role.dto";
 
 const mockPrisma = {
   bUserRole: {

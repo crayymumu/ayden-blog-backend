@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserRoleController } from "../../user-role/user-role.controller";
-import { UserRoleService } from "../../user-role/user-role.service";
+import { UserRoleController } from "../../modules/user-role/user-role.controller";
+import { UserRoleService } from "../../modules/user-role/user-role.service";
 import {
   CreateUserRoleDto,
   UpdateUserRoleDto,
-} from "../../user-role/dto/user-role.dto";
+} from "../../modules/user-role/dto/user-role.dto";
 
 const mockService = {
   create: jest.fn(),

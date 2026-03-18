@@ -1,9 +1,4 @@
-import {
-  Authenticated,
-  CanAccess,
-  ErrorComponent,
-  Refine,
-} from "@refinedev/core";
+import { Authenticated, ErrorComponent, Refine } from "@refinedev/core";
 import { DevtoolsProvider, DevtoolsPanel } from "@refinedev/devtools";
 import routerProvider, {
   UnsavedChangesNotifier,
@@ -13,10 +8,6 @@ import routerProvider, {
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 import { Toaster } from "react-hot-toast";
 
-import { PageEmployeeTimeOffsList } from "@/pages/employee/time-offs/list";
-import { PageEmployeeTimeOffsCreate } from "@/pages/employee/time-offs/create";
-import { PageManagerRequestsList } from "@/pages/manager/requests/list";
-import { PageManagerRequestsTimeOffsEdit } from "@/pages/manager/requests/time-offs/edit";
 import { PageLogin } from "@/pages/login";
 
 import { PageBlogList } from "@/pages/blog/list";
@@ -38,11 +29,8 @@ import { accessControlProvider } from "@/providers/access-control";
 import { useNotificationProvider } from "@/providers/notification-provider";
 import { queryClient } from "@/providers/query-client";
 import { dataProvider } from "@/providers/data";
-import { blogDataProvider } from "@/providers/blog-data-provider";
 
-import { RequestsIcon, TimeOffIcon, BookIcon } from "@/icons";
-
-import { Role } from "@/types";
+import { BookIcon } from "@/icons";
 
 import "@/utilities/init-dayjs";
 
@@ -55,49 +43,12 @@ const App: React.FC = () => {
             accessControlProvider={accessControlProvider}
             authProvider={authProvider}
             routerProvider={routerProvider}
-            dataProvider={{ default: dataProvider, blog: blogDataProvider }}
+            dataProvider={dataProvider}
             notificationProvider={useNotificationProvider}
             resources={[
               {
-                name: "employee",
-                meta: {
-                  scope: Role.EMPLOYEE,
-                },
-              },
-              {
-                name: "manager",
-                meta: {
-                  scope: Role.MANAGER,
-                  order: 1,
-                },
-              },
-              {
-                name: "time-offs",
-                list: "/employee/time-offs",
-                create: "/employee/time-offs/new",
-                meta: {
-                  parent: "employee",
-                  scope: Role.EMPLOYEE,
-                  label: "Time Off",
-                  icon: <TimeOffIcon />,
-                },
-              },
-              {
-                name: "time-offs",
-                list: "/manager/requests",
-                edit: "/manager/requests/:id/edit",
-                identifier: "requests",
-                meta: {
-                  parent: "manager",
-                  scope: Role.MANAGER,
-                  label: "Requests",
-                  icon: <RequestsIcon />,
-                },
-              },
-              {
                 name: "blog",
                 meta: {
-                  scope: Role.MANAGER,
                   label: "Blog",
                 },
               },
@@ -109,10 +60,8 @@ const App: React.FC = () => {
                 show: "/blog/posts/:id",
                 meta: {
                   parent: "blog",
-                  scope: Role.MANAGER,
                   label: "博客管理",
                   icon: <BookIcon />,
-                  dataProviderName: "blog",
                 },
               },
               {
@@ -122,10 +71,8 @@ const App: React.FC = () => {
                 edit: "/blog/categories/:id/edit",
                 meta: {
                   parent: "blog",
-                  scope: Role.MANAGER,
                   label: "Categories",
                   hide: true,
-                  dataProviderName: "blog",
                 },
               },
               {
@@ -135,10 +82,8 @@ const App: React.FC = () => {
                 edit: "/blog/tags/:id/edit",
                 meta: {
                   parent: "blog",
-                  scope: Role.MANAGER,
                   label: "Tags",
                   hide: true,
-                  dataProviderName: "blog",
                 },
               },
             ]}
@@ -163,27 +108,8 @@ const App: React.FC = () => {
               >
                 <Route
                   index
-                  element={<NavigateToResource resource="time-offs" />}
+                  element={<NavigateToResource resource="blogs" />}
                 />
-
-                <Route
-                  path="employee"
-                  element={
-                    <ThemeProvider role={Role.EMPLOYEE}>
-                      <Layout>
-                        <Outlet />
-                      </Layout>
-                    </ThemeProvider>
-                  }
-                >
-                  <Route path="time-offs" element={<Outlet />}>
-                    <Route index element={<PageEmployeeTimeOffsList />} />
-                    <Route
-                      path="new"
-                      element={<PageEmployeeTimeOffsCreate />}
-                    />
-                  </Route>
-                </Route>
 
                 <Route
                   path="blog"
@@ -213,39 +139,9 @@ const App: React.FC = () => {
               </Route>
 
               <Route
-                path="manager"
-                element={
-                  <ThemeProvider role={Role.MANAGER}>
-                    <Layout>
-                      <CanAccess
-                        action="manager"
-                        fallback={<NavigateToResource resource="time-offs" />}
-                      >
-                        <Outlet />
-                      </CanAccess>
-                    </Layout>
-                  </ThemeProvider>
-                }
-              >
-                <Route
-                  path="requests"
-                  element={
-                    <PageManagerRequestsList>
-                      <Outlet />
-                    </PageManagerRequestsList>
-                  }
-                >
-                  <Route
-                    path=":id/edit"
-                    element={<PageManagerRequestsTimeOffsEdit />}
-                  />
-                </Route>
-              </Route>
-
-              <Route
                 element={
                   <Authenticated key="auth-pages" fallback={<Outlet />}>
-                    <NavigateToResource resource="time-offs" />
+                    <NavigateToResource resource="blogs" />
                   </Authenticated>
                 }
               >

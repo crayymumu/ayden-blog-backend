@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PermissionService } from "../../permission/permission.service";
+import { PermissionService } from "../../modules/permission/permission.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
-} from "../../permission/dto/permission.dto";
+} from "../../modules/permission/dto/permission.dto";
 
 const mockPrisma = {
   bPermission: {

@@ -1,92 +1,66 @@
 import type { AuthProvider } from "@refinedev/core";
-import { Role, type Employee, type ResponseLogin } from "@/types";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/utilities/constants";
-import { kyInstance } from "../data";
+import { authClient } from "@/lib/auth-client";
 
 export const authProvider: AuthProvider = {
-  login: async ({ email, redirectTo }) => {
-    try {
-      /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion -- ky returns any, JSON parse needs cast */
-      const response = await kyInstance("login", {
-        method: "post",
-        body: JSON.stringify({ email }),
-      });
-      const result = (await response.json()) as ResponseLogin;
-      /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion */
-      const { accessToken, refreshToken, user } = result;
+  login: async ({ email, password }: { email: string; password: string }) => {
+    const { data, error } = await authClient.signIn.email({
+      email,
+      password,
+    });
 
-      localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-      localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      return {
-        success: true,
-        redirectTo: redirectTo as string | undefined,
-      };
-    } catch {
+    if (error || !data) {
       return {
         success: false,
         error: {
-          message: "Login failed",
-          name: "Invalid email or password",
+          message: error?.message ?? "登录失败",
+          name: "登录错误",
         },
       };
     }
+
+    return {
+      success: true,
+      redirectTo: "/",
+    };
   },
   register: async () => {
     throw new Error("Not implemented");
   },
   logout: async () => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    localStorage.removeItem("user");
-
+    await authClient.signOut();
     return {
       success: true,
       redirectTo: "/login",
     };
   },
-  onError: async (error: { response?: { status?: number } }) => {
-    if (error.response?.status === 401) {
-      return {
-        logout: true,
-      };
+  onError: async (httpError: unknown) => {
+    const err = httpError as { response?: { status?: number } };
+    if (err?.response?.status === 401) {
+      return { logout: true };
     }
-
-    return { error };
+    return {};
   },
-  check: async () =>
-    localStorage.getItem(ACCESS_TOKEN_KEY)
-      ? {
-          authenticated: true,
-        }
-      : {
-          authenticated: false,
-          error: {
-            message: "Check failed",
-            name: "Not authenticated",
-          },
-          logout: true,
-          redirectTo: "/login",
-        },
-  getPermissions: async () => {
-    const user = localStorage.getItem("user");
-
-    if (!user) {
-      return {
-        role: Role.EMPLOYEE,
-      };
+  check: async () => {
+    const { data } = await authClient.getSession();
+    if (data?.session) {
+      return { authenticated: true };
     }
-
-    const parsedUser = JSON.parse(user) as { role?: string };
-
     return {
-      role: parsedUser.role,
+      authenticated: false,
+      error: {
+        message: "Check failed",
+        name: "Not authenticated",
+      },
+      logout: true,
+      redirectTo: "/login",
     };
   },
+  getPermissions: async () => {
+    return {};
+  },
   getIdentity: async () => {
-    const user = await kyInstance("me").json<Employee>();
-
-    return user;
+    const { data } = await authClient.getSession();
+    if (!data?.user) return null;
+    return data.user;
   },
 };

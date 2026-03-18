@@ -1,9 +1,3 @@
-export type ResponseLogin = {
-  user: Employee;
-  accessToken: string;
-  refreshToken: string;
-};
-
 export type Employee = {
   id: number;
   createdAt: string;
@@ -50,6 +44,16 @@ export enum TimeOffType {
   SICK = "Sick",
   CASUAL = "Casual",
 }
+
+export type AuthUser = {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  nickname: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type Blog = {
   id: number;

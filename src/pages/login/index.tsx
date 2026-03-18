@@ -1,22 +1,44 @@
 import { useState } from "react";
 import { useLogin } from "@refinedev/core";
 import {
-  Avatar,
   Box,
   Button,
+  CircularProgress,
   Divider,
-  MenuItem,
-  Select,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
   Typography,
 } from "@mui/material";
-import { HrLogo } from "@/icons";
+import { ViewIcon, EyeOffIcon, HrLogo } from "@/icons";
 
 export const PageLogin = () => {
-  const [selectedEmail, setSelectedEmail] = useState<string>(
-    mockUsers.managers[0].email,
-  );
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({ username: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
   const { mutate: login } = useLogin();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors = { username: "", password: "" };
+    if (!username.trim()) newErrors.username = "此字段为必填项";
+    if (!password.trim()) newErrors.password = "此字段为必填项";
+
+    setErrors(newErrors);
+
+    if (newErrors.username || newErrors.password) return;
+
+    setIsLoading(true);
+    login(
+      { email: username, password },
+      { onSettled: () => setIsLoading(false) },
+    );
+  };
 
   return (
     <Box
@@ -32,6 +54,8 @@ export const PageLogin = () => {
       }}
     >
       <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
           zIndex: 2,
           background: "white",
@@ -59,127 +83,67 @@ export const PageLogin = () => {
 
         <Divider />
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <Typography variant="caption" color="text.secondary">
-            Select user
-          </Typography>
-          <Select
-            size="small"
-            value={selectedEmail}
-            sx={{
-              height: "40px",
-              borderRadius: "12px",
-
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderWidth: "1px !important",
-                borderColor: (theme) => `${theme.palette.divider} !important`,
-              },
+        <Stack spacing={2}>
+          <TextField
+            fullWidth
+            label="用户名或邮箱"
+            placeholder="请输入用户名或邮箱"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              if (errors.username) setErrors({ ...errors, username: "" });
             }}
-            MenuProps={{
-              sx: {
-                "& .MuiList-root": {
-                  paddingBottom: "0px",
-                },
+            error={!!errors.username}
+            helperText={errors.username}
+          />
 
-                "& .MuiPaper-root": {
-                  border: (theme) => `1px solid ${theme.palette.divider}`,
-                  borderRadius: "12px",
-                  boxShadow: "none",
-                },
-              },
+          <TextField
+            fullWidth
+            type={showPassword ? "text" : "password"}
+            label="密码"
+            placeholder="请输入密码"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) setErrors({ ...errors, password: "" });
             }}
-          >
-            <Typography
-              variant="caption"
-              textTransform="uppercase"
-              color="text.secondary"
-              sx={{
-                paddingLeft: "12px",
-                paddingBottom: "8px",
-                display: "block",
-              }}
-            >
-              Managers
-            </Typography>
-            {mockUsers.managers.map((user) => (
-              <MenuItem
-                key={user.email}
-                value={user.email}
-                onClick={() => setSelectedEmail(user.email)}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <Avatar
-                    src={user.avatarUrl}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    sx={{ width: "24px", height: "24px" }}
-                  />
-                  <Typography
-                    noWrap
-                    variant="caption"
-                    sx={{ display: "flex", alignItems: "center" }}
+            error={!!errors.password}
+            helperText={errors.password}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
                   >
-                    {`${user.firstName} ${user.lastName}`}
-                  </Typography>
-                </Box>
-              </MenuItem>
-            ))}
-
-            <Divider />
-
-            <Typography
-              variant="caption"
-              textTransform="uppercase"
-              color="text.secondary"
-              sx={{
-                paddingLeft: "12px",
-                paddingBottom: "8px",
-                display: "block",
-              }}
-            >
-              Employees
-            </Typography>
-            {mockUsers.employees.map((user) => (
-              <MenuItem
-                key={user.email}
-                value={user.email}
-                onClick={() => setSelectedEmail(user.email)}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <Avatar
-                    src={user.avatarUrl}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    sx={{ width: "24px", height: "24px" }}
-                  />
-                  <Typography
-                    noWrap
-                    variant="caption"
-                    sx={{ display: "flex", alignItems: "center" }}
-                  >
-                    {`${user.firstName} ${user.lastName}`}
-                  </Typography>
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
+                    {showPassword ? <EyeOffIcon /> : <ViewIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
 
         <Button
+          type="submit"
           variant="contained"
+          disabled={isLoading}
           sx={{
             borderRadius: "12px",
             height: "40px",
             width: "100%",
-            color: "white",
-            backgroundColor: (theme) => theme.palette.grey[900],
-          }}
-          onClick={() => {
-            login({ email: selectedEmail });
           }}
         >
-          Sign in
+          {isLoading ? (
+            <>
+              <CircularProgress size={20} sx={{ mr: 1 }} />
+              登录中...
+            </>
+          ) : (
+            "登录"
+          )}
         </Button>
       </Box>
-
       <Box
         sx={{
           zIndex: 1,
@@ -232,53 +196,4 @@ export const PageLogin = () => {
       </Box>
     </Box>
   );
-};
-
-const mockUsers = {
-  managers: [
-    {
-      email: "michael.scott@dundermifflin.com",
-      firstName: "Michael",
-      lastName: "Scott",
-      avatarUrl:
-        "https://refine-hr-example.s3.eu-west-1.amazonaws.com/avatars/Michael-Scott.png",
-    },
-    {
-      avatarUrl:
-        "https://refine-hr-example.s3.eu-west-1.amazonaws.com/avatars/Jim-Halpert.png",
-      firstName: "Jim",
-      lastName: "Halpert",
-      email: "jim.halpert@dundermifflin.com",
-    },
-    {
-      avatarUrl:
-        "https://refine-hr-example.s3.eu-west-1.amazonaws.com/avatars/Toby-Flenderson.png",
-      firstName: "Toby",
-      lastName: "Flenderson",
-      email: "toby.flenderson@dundermifflin.com",
-    },
-  ],
-  employees: [
-    {
-      avatarUrl:
-        "https://refine-hr-example.s3.eu-west-1.amazonaws.com/avatars/Pam-Beesly.png",
-      firstName: "Pam",
-      lastName: "Beesly",
-      email: "pam.beesly@dundermifflin.com",
-    },
-    {
-      avatarUrl:
-        "https://refine-hr-example.s3.eu-west-1.amazonaws.com/avatars/Andy-Bernard.png",
-      firstName: "Andy",
-      lastName: "Bernard",
-      email: "andy.bernard@dundermifflin.com",
-    },
-    {
-      avatarUrl:
-        "https://refine-hr-example.s3.eu-west-1.amazonaws.com/avatars/Ryan-Howard.png",
-      firstName: "Ryan",
-      lastName: "Howard",
-      email: "ryan.howard@dundermifflin.com",
-    },
-  ],
 };

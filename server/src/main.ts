@@ -8,7 +8,10 @@ async function bootstrap(): Promise<void> {
     bodyParser: false,
   });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
