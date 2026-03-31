@@ -48,5 +48,6 @@ function autoIconBarrel(): Plugin {
 }
 
 export default defineConfig({
+  base: "/",
   plugins: [tsconfigPaths({ root: __dirname }), react(), autoIconBarrel()],
 });

@@ -17,6 +17,12 @@
     -->
     <link rel="manifest" href="/manifest.json" />
     <title>Refine HR</title>
+    <script>
+      (function(){
+        var redir = new URLSearchParams(window.location.search).get('__spa_redirect');
+        if (redir) window.history.replaceState(null, '', decodeURIComponent(redir));
+      })();
+    </script>
   </head>
 
   <body>
