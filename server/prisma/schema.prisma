@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model BUser {
@@ -84,8 +84,8 @@ model BBlog {
   blogUpdatetime DateTime? @map("blog_updateTime")
   blogCreatetime DateTime? @map("blog_createTime")
   blogFlag      Int       @default(0) @map("blog_flag")
-  blogMdcontent String?   @map("blog_mdContent") @db.LongText
-  blogContent   String?   @map("blog_content") @db.LongText
+  blogMdcontent String?   @map("blog_mdContent") @db.Text
+  blogContent   String?   @map("blog_content") @db.Text
 
   author     BUser?          @relation(fields: [blogAuthor], references: [id])
   categories BBlogCategory[]

@@ -1,14 +1,13 @@
 import { betterAuth } from "better-auth";
-import { createPool } from "mysql2/promise";
+import { Pool } from "pg";
 
 export const auth = betterAuth({
-  database: createPool({
+  database: new Pool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: Number(process.env.DB_PORT) || 3306,
-    timezone: "Z",
+    port: Number(process.env.DB_PORT) || 5432,
   }),
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins: [process.env.VITE_BLOG_URL as string],

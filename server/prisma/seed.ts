@@ -1,15 +1,17 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { randomUUID } from "crypto";
 import "dotenv/config";
 
-const adapter = new PrismaMariaDb({
+const pool = new Pool({
   host: process.env.DB_HOST ?? "localhost",
-  port: Number(process.env.DB_PORT ?? 3306),
+  port: Number(process.env.DB_PORT ?? 5432),
   user: process.env.DB_USER ?? "",
   password: process.env.DB_PASSWORD ?? "",
   database: process.env.DB_NAME ?? "",
 });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

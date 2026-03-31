@@ -149,7 +149,7 @@ export class BlogService {
   async selectPlaceOnFile() {
     const results = await this.prisma.$queryRaw<
       { fileDate: string; blogCount: bigint }[]
-    >`SELECT DATE_FORMAT(blog_createTime, '%Y-%m-01') as fileDate, COUNT(*) as blogCount FROM b_blog WHERE blog_level = 0 AND blog_flag = 0 GROUP BY fileDate ORDER BY fileDate DESC`;
+    >`SELECT to_char("blog_createTime", 'YYYY-MM') || '-01' as "fileDate", COUNT(*) as "blogCount" FROM "b_blog" WHERE "blog_level" = 0 AND "blog_flag" = 0 GROUP BY "fileDate" ORDER BY "fileDate" DESC`;
     return results.map((r) => ({
       fileDate: r.fileDate,
       blogCount: Number(r.blogCount),
@@ -166,10 +166,10 @@ export class BlogService {
 
   async selectBlogByDate(createDate: string) {
     const results = await this.prisma.$queryRaw<any[]>`
-      SELECT * FROM b_blog
-      WHERE DATE_FORMAT(blog_createTime, '%Y-%m') = ${createDate}
-      AND blog_level = 0 AND blog_flag = 0
-      ORDER BY blog_createTime DESC`;
+      SELECT * FROM "b_blog"
+      WHERE to_char("blog_createTime", 'YYYY-MM') = ${createDate}
+      AND "blog_level" = 0 AND "blog_flag" = 0
+      ORDER BY "blog_createTime" DESC`;
     return results as Record<string, unknown>[];
   }
 
