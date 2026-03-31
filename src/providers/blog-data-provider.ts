@@ -161,7 +161,7 @@ const singleEndpoints: Record<string, string> = {
   tags: "tag",
 };
 
-export const blogDataProvider: DataProvider = {
+export const blogDataProvider = {
   getList: async ({ resource, pagination }) => {
     const endpoint = listEndpoints[resource] ?? resource;
     const current = pagination?.currentPage ?? 1;
@@ -264,4 +264,4 @@ export const blogDataProvider: DataProvider = {
   },
 
   getApiUrl: () => BLOG_API_URL,
-};
+} as DataProvider;

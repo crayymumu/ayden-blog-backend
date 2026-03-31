@@ -35,7 +35,7 @@ export const PageTagEdit = () => {
   };
 
   return (
-    <LoadingOverlay loading={formLoading || query?.isLoading}>
+    <LoadingOverlay loading={!!(formLoading || query?.isLoading)}>
       <Box>
         <PageHeader title="编辑标签" showListButton showDivider />
 

@@ -35,7 +35,7 @@ export const PageCategoryEdit = () => {
   };
 
   return (
-    <LoadingOverlay loading={formLoading || query?.isLoading}>
+    <LoadingOverlay loading={!!(formLoading || query?.isLoading)}>
       <Box>
         <PageHeader title="编辑分类" showListButton showDivider />
 

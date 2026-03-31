@@ -22,21 +22,19 @@ type FormValues = Omit<
 >;
 
 export const PageBlogCreate = () => {
-  const { data: categoriesRaw } = useList<Category>({
+  const { result: categoriesResult } = useList<Category>({
     resource: "categories",
     meta: { dataProviderName: "blog" },
     pagination: { mode: "off" },
   });
-  const categoryOptions: Category[] =
-    (categoriesRaw as { data: Category[] } | undefined)?.data ?? [];
+  const categoryOptions: Category[] = categoriesResult?.data ?? [];
 
-  const { data: tagsRaw } = useList<Tag>({
+  const { result: tagsResult } = useList<Tag>({
     resource: "tags",
     meta: { dataProviderName: "blog" },
     pagination: { mode: "off" },
   });
-  const tagOptions: Tag[] =
-    (tagsRaw as { data: Tag[] } | undefined)?.data ?? [];
+  const tagOptions: Tag[] = tagsResult?.data ?? [];
 
   const {
     refineCore: { formLoading, onFinish },
