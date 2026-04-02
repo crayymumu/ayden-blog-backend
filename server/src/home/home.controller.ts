@@ -9,6 +9,12 @@ import { BlogListQueryDto, SearchBlogsDto } from "./dto/home.dto";
 export class HomeController {
   constructor(private readonly homeService: HomeService) {}
 
+  @Get("health")
+  @AllowAnonymous()
+  health() {
+    return { status: "ok" };
+  }
+
   @Get("indexCount")
   @AllowAnonymous()
   async indexCount(): Promise<Result> {

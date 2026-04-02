@@ -1,0 +1,138 @@
+name: Deploy Server to VPS
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "server/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-server-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: server/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: server
+
+      - run: pnpm run build
+        working-directory: server
+
+      - name: Prepare artifacts
+        run: |
+          mkdir -p deploy
+          cp -r server/dist deploy/
+          cp server/package.json deploy/
+          cp -r server/prisma deploy/
+          cp server/ecosystem.config.js deploy/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: server-build
+          path: deploy/
+          retention-days: 5
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: server-build
+          path: deploy
+
+      - name: Set release ID
+        id: vars
+        run: echo "release_id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "deploy/"
+          target: "${{ secrets.VPS_DEPLOY_PATH }}/releases/${{ steps.vars.outputs.release_id }}"
+          strip_components: 1
+
+      - name: Deploy, switch and verify
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
+          RELEASE_ID: ${{ steps.vars.outputs.release_id }}
+          HEALTHCHECK_URL: ${{ secrets.VPS_HEALTHCHECK_URL }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          envs: DEPLOY_PATH,RELEASE_ID,HEALTHCHECK_URL
+          script_stop: true
+          script: |
+            set -e
+
+            RELEASE_DIR="$DEPLOY_PATH/releases/$RELEASE_ID"
+            CURRENT="$DEPLOY_PATH/current"
+            SHARED_ENV="$DEPLOY_PATH/shared/.env"
+
+            mkdir -p "$DEPLOY_PATH/shared" "$DEPLOY_PATH/releases"
+
+            cd "$RELEASE_DIR"
+
+            [ -f "$SHARED_ENV" ] && ln -sf "$SHARED_ENV" .env
+
+            npm install --omit=dev --ignore-scripts
+            npx prisma generate --schema=prisma/schema.prisma
+
+            PREVIOUS=""
+            [ -L "$CURRENT" ] && PREVIOUS="$(readlink -f "$CURRENT")"
+
+            ln -sfn "$RELEASE_DIR" "$CURRENT"
+
+            cd "$CURRENT"
+            pm2 delete blog-server 2>/dev/null || true
+            pm2 start ecosystem.config.js --env production
+
+            sleep 5
+
+            if [ -n "$HEALTHCHECK_URL" ]; then
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$HEALTHCHECK_URL" || echo "000")
+              if [ "$HTTP_CODE" != "200" ]; then
+                echo "Healthcheck failed (HTTP $HTTP_CODE), rolling back..."
+                if [ -n "$PREVIOUS" ] && [ -d "$PREVIOUS" ]; then
+                  ln -sfn "$PREVIOUS" "$CURRENT"
+                  cd "$CURRENT"
+                  pm2 delete blog-server 2>/dev/null || true
+                  pm2 start ecosystem.config.js --env production
+                fi
+                exit 1
+              fi
+            fi
+
+            cd "$DEPLOY_PATH/releases"
+            ls -1dt */ | tail -n +6 | xargs -r rm -rf
+
+            pm2 save
