@@ -102,13 +102,13 @@ jobs:
 
             cd "$RELEASE_DIR"
 
-            [ -f "$SHARED_ENV" ] && ln -sf "$SHARED_ENV" .env
+            if [ -f "$SHARED_ENV" ]; then ln -sf "$SHARED_ENV" .env; fi
 
             npm install --omit=dev --ignore-scripts
             npx prisma generate --schema=prisma/schema.prisma
 
             PREVIOUS=""
-            [ -L "$CURRENT" ] && PREVIOUS="$(readlink -f "$CURRENT")"
+            if [ -L "$CURRENT" ]; then PREVIOUS="$(readlink -f "$CURRENT")"; fi
 
             ln -sfn "$RELEASE_DIR" "$CURRENT"
 
