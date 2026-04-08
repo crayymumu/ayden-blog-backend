@@ -1,25 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { promises as fs } from "fs";
-import { join, extname } from "path";
+import { Injectable, NotImplementedException } from '@nestjs/common'
 
 @Injectable()
 export class UploadService {
-  private uploadDir = process.env.UPLOAD_DIR || "./uploads";
-
   async getFileHost(): Promise<string> {
-    return process.env.BETTER_AUTH_URL || "http://localhost:3000";
+    return process.env.BETTER_AUTH_URL || 'http://localhost:3000'
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<string> {
-    await fs.mkdir(this.uploadDir, { recursive: true });
-    const filename = `${Date.now()}${extname(file.originalname)}`;
-    const filepath = join(this.uploadDir, filename);
-    await fs.writeFile(filepath, file.buffer);
-    const host = await this.getFileHost();
-    return `${host}/uploads/${filename}`;
+  async uploadFile(_file: Express.Multer.File): Promise<string> {
+    throw new NotImplementedException(
+      'Local upload removed. Use cloud storage presigned URL instead.',
+    )
   }
 
-  async uploadFiles(files: Express.Multer.File[]): Promise<string[]> {
-    return Promise.all(files.map((f) => this.uploadFile(f)));
+  async uploadFiles(_files: Express.Multer.File[]): Promise<string[]> {
+    throw new NotImplementedException(
+      'Local upload removed. Use cloud storage presigned URL instead.',
+    )
   }
 }

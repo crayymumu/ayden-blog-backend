@@ -39,6 +39,12 @@ async function main() {
     "user",
     "role",
     "permission",
+    "photo-image",
+    "photo-album",
+    "photo-tag",
+    "photo-config",
+    "photo-analytics",
+    "photo-storage",
   ];
   const actions = ["create", "read", "update", "delete"];
   const permissions: {
@@ -65,6 +71,20 @@ async function main() {
   await prisma.bRolePermission.createMany({
     data: allPermissions.map((p) => ({
       roleId: adminRole.roleId,
+      permissionId: p.permissionId,
+    })),
+  });
+
+  const photoAdminRole = await prisma.bRole.create({
+    data: { role: "photoAdmin", completeName: "相册管理员" },
+  });
+
+  const photoPerms = allPermissions.filter((p) =>
+    p.permission?.startsWith("photo-"),
+  );
+  await prisma.bRolePermission.createMany({
+    data: photoPerms.map((p) => ({
+      roleId: photoAdminRole.roleId,
       permissionId: p.permissionId,
     })),
   });

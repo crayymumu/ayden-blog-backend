@@ -1,11 +1,11 @@
-import type { PropsWithChildren } from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import GlobalStyles from "@mui/material/GlobalStyles";
-import { ThemeProvider as MuiThemeProvider, createTheme } from "@mui/material";
-import type { ThemeOptions } from "@mui/material/styles";
-import { deepmerge } from "@mui/utils";
-import { ChevronDownIcon } from "@/icons/sources/chevron-down";
-import { indigo, red, slate, teal } from "./colors";
+import type { ThemeOptions } from '@mui/material/styles'
+import type { PropsWithChildren } from 'react'
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material'
+import CssBaseline from '@mui/material/CssBaseline'
+import GlobalStyles from '@mui/material/GlobalStyles'
+import { deepmerge } from '@mui/utils'
+import { ChevronDownIcon } from '@/icons/sources/chevron-down'
+import { indigo, red, slate, teal } from './colors'
 
 const themeOptionsBase: ThemeOptions = {
   breakpoints: {
@@ -21,22 +21,22 @@ const themeOptionsBase: ThemeOptions = {
     MuiDivider: {
       styleOverrides: {
         root: {
-          width: "100%",
+          width: '100%',
         },
       },
     },
     MuiAutocomplete: {
       styleOverrides: {
         option: {
-          fontSize: "14px",
-          lineHeight: "24px",
+          fontSize: '14px',
+          lineHeight: '24px',
         },
         root: {
-          "& .MuiAutocomplete-inputRoot": {
-            padding: "0",
-            paddingLeft: "8px",
-            minHeight: "40px",
-            height: "max-content !important",
+          '& .MuiAutocomplete-inputRoot': {
+            padding: '0',
+            paddingLeft: '8px',
+            minHeight: '40px',
+            height: 'max-content !important',
           },
         },
       },
@@ -44,34 +44,34 @@ const themeOptionsBase: ThemeOptions = {
     MuiInputBase: {
       styleOverrides: {
         root: {
-          padding: 0,
-          height: "40px",
+          'padding': 0,
+          'height': '40px',
 
-          "&.MuiInputBase-adornedStart": {
-            padding: "8px",
+          '&.MuiInputBase-adornedStart': {
+            padding: '8px',
           },
         },
         multiline: {
-          height: "auto",
+          height: 'auto',
         },
         sizeSmall: {
-          height: "32px",
+          height: '32px',
         },
         input: {
-          fontSize: "14px",
-          lineHeight: "20px",
-          paddingLeft: "0",
+          fontSize: '14px',
+          lineHeight: '20px',
+          paddingLeft: '0',
         },
       },
     },
     MuiPaginationItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "transparent",
-          borderRadius: "6px",
+          'backgroundColor': 'transparent',
+          'borderRadius': '6px',
 
-          "&.Mui-selected": {
-            backgroundColor: "transparent",
+          '&.Mui-selected': {
+            backgroundColor: 'transparent',
             border: `1px solid ${slate[200]}`,
           },
         },
@@ -80,17 +80,17 @@ const themeOptionsBase: ThemeOptions = {
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          borderRadius: "12px",
-          height: "calc(100% - 16px)",
-          margin: "8px",
+          borderRadius: '12px',
+          height: 'calc(100% - 16px)',
+          margin: '8px',
         },
       },
     },
     MuiToggleButtonGroup: {
       styleOverrides: {
         root: {
-          borderRadius: "6px",
-          padding: "4px",
+          borderRadius: '6px',
+          padding: '4px',
           backgroundColor: slate[100],
         },
       },
@@ -98,22 +98,22 @@ const themeOptionsBase: ThemeOptions = {
     MuiToggleButton: {
       styleOverrides: {
         root: {
-          borderTopLeftRadius: "3px !important",
-          borderBottomLeftRadius: "3px !important",
-          borderTopRightRadius: "3px !important",
-          borderBottomRightRadius: "3px !important",
-          border: "none",
-          padding: "6px 12px",
-          borderRadius: "3px",
-          minWidth: "160px",
-          height: "32px",
-          backgroundColor: "transparent",
-          textTransform: "capitalize",
-          color: slate[700],
+          'borderTopLeftRadius': '3px !important',
+          'borderBottomLeftRadius': '3px !important',
+          'borderTopRightRadius': '3px !important',
+          'borderBottomRightRadius': '3px !important',
+          'border': 'none',
+          'padding': '6px 12px',
+          'borderRadius': '3px',
+          'minWidth': '160px',
+          'height': '32px',
+          'backgroundColor': 'transparent',
+          'textTransform': 'capitalize',
+          'color': slate[700],
 
-          "&.Mui-selected": {
+          '&.Mui-selected': {
             color: slate[900],
-            backgroundColor: "white",
+            backgroundColor: 'white',
           },
         },
       },
@@ -121,28 +121,28 @@ const themeOptionsBase: ThemeOptions = {
     MuiTextField: {
       styleOverrides: {
         root: {
-          "& .MuiOutlinedInput-notchedOutline": {
+          '& .MuiOutlinedInput-notchedOutline': {
             borderColor: `${slate[200]} !important`,
-            borderWidth: "1px !important",
-            borderRadius: "6px",
+            borderWidth: '1px !important',
+            borderRadius: '6px',
           },
 
-          "& .MuiInputBase-inputSizeSmall": {
-            fontSize: "12px",
-            lineHeight: "16px",
+          '& .MuiInputBase-inputSizeSmall': {
+            fontSize: '12px',
+            lineHeight: '16px',
           },
         },
       },
     },
     MuiIconButton: {
       defaultProps: {
-        size: "large",
+        size: 'large',
       },
       styleOverrides: {
         root: {
-          color: slate[500],
-          "&:hover": {
-            backgroundColor: "transparent",
+          'color': slate[500],
+          '&:hover': {
+            backgroundColor: 'transparent',
           },
         },
       },
@@ -151,9 +151,9 @@ const themeOptionsBase: ThemeOptions = {
       styleOverrides: {
         root: {
           color: slate[500],
-          fontSize: "12px",
-          lineHeight: "16px",
-          flexWrap: "wrap",
+          fontSize: '12px',
+          lineHeight: '16px',
+          flexWrap: 'wrap',
         },
       },
     },
@@ -162,17 +162,17 @@ const themeOptionsBase: ThemeOptions = {
         root: {
           backgroundColor: slate[200],
           color: slate[500],
-          fontSize: "12px",
-          lineHeight: "16px",
+          fontSize: '12px',
+          lineHeight: '16px',
         },
       },
     },
     MuiFormControl: {
       styleOverrides: {
         root: {
-          alignItems: "flex-start",
-          "& > .MuiFormLabel-root": {
-            marginBottom: "8px",
+          'alignItems': 'flex-start',
+          '& > .MuiFormLabel-root': {
+            marginBottom: '8px',
           },
         },
       },
@@ -180,8 +180,8 @@ const themeOptionsBase: ThemeOptions = {
     MuiFormGroup: {
       styleOverrides: {
         root: {
-          "&.MuiRadioGroup-root": {
-            gap: "8px",
+          '&.MuiRadioGroup-root': {
+            gap: '8px',
           },
         },
       },
@@ -190,28 +190,28 @@ const themeOptionsBase: ThemeOptions = {
       styleOverrides: {
         root: {
           padding: 0,
-          marginLeft: "12px",
-          marginRight: "8px",
+          marginLeft: '12px',
+          marginRight: '8px',
           color: slate[900],
         },
         sizeSmall: {
-          width: "16px",
-          height: "16px",
+          width: '16px',
+          height: '16px',
         },
       },
     },
     MuiFormControlLabel: {
       styleOverrides: {
         label: {
-          fontSize: "14px",
-          lineHeight: "24px",
+          fontSize: '14px',
+          lineHeight: '24px',
         },
       },
     },
     MuiButton: {
       defaultProps: {
-        variant: "contained",
-        size: "large",
+        variant: 'contained',
+        size: 'large',
       },
       styleOverrides: {
         colorInherit: {
@@ -219,28 +219,28 @@ const themeOptionsBase: ThemeOptions = {
           backgroundColor: slate[100],
         },
         sizeLarge: {
-          padding: "0px 16px",
-          minWidth: "80px",
-          height: "40px",
+          padding: '0px 16px',
+          minWidth: '80px',
+          height: '40px',
         },
         root: {
-          width: "max-content",
-          fontSize: "14px",
-          lineHeight: "20px",
-          fontWeight: 400,
-          boxShadow: "none",
-          borderRadius: "6px",
-          textTransform: "capitalize",
+          'width': 'max-content',
+          'fontSize': '14px',
+          'lineHeight': '20px',
+          'fontWeight': 400,
+          'boxShadow': 'none',
+          'borderRadius': '6px',
+          'textTransform': 'capitalize',
 
-          "&:hover": {
-            boxShadow: "none",
+          '&:hover': {
+            boxShadow: 'none',
           },
 
-          "&.MuiButton-colorError": {
-            color: "white",
-            backgroundColor: red[500],
+          '&.MuiButton-colorError': {
+            'color': 'white',
+            'backgroundColor': red[500],
 
-            "&:hover": {
+            '&:hover': {
               backgroundColor: red[600],
             },
           },
@@ -250,7 +250,7 @@ const themeOptionsBase: ThemeOptions = {
     MuiSelect: {
       styleOverrides: {
         root: {
-          "& .MuiOutlinedInput-notchedOutline": {
+          '& .MuiOutlinedInput-notchedOutline': {
             borderColor: slate[200],
           },
         },
@@ -272,18 +272,18 @@ const themeOptionsBase: ThemeOptions = {
     MuiTableRow: {
       styleOverrides: {
         root: {
-          height: "30px",
+          height: '30px',
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
         root: {
-          height: "30px",
-          lineHeight: "30px",
-          padding: "8px 12px",
-          "& p": {
-            fontSize: "14px",
+          'height': '30px',
+          'lineHeight': '30px',
+          'padding': '8px 12px',
+          '& p': {
+            fontSize: '14px',
           },
         },
       },
@@ -297,13 +297,13 @@ const themeOptionsBase: ThemeOptions = {
       disabled: slate[300],
     },
     success: {
-      main: "#16A34A",
-      light: "#0D9488",
+      main: '#16A34A',
+      light: '#0D9488',
     },
     error: {
-      dark: "#B91C1C",
-      main: "#DC2626",
-      light: "#EF4444",
+      dark: '#B91C1C',
+      main: '#DC2626',
+      light: '#EF4444',
     },
     grey: slate,
     divider: slate[200],
@@ -311,12 +311,12 @@ const themeOptionsBase: ThemeOptions = {
       selected: slate[100],
       hover: slate[50],
     },
-    mode: "light",
+    mode: 'light',
   },
   typography: {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: 'Inter, sans-serif',
   },
-};
+}
 
 const themeOptionsEmployee: ThemeOptions = {
   palette: {
@@ -329,7 +329,7 @@ const themeOptionsEmployee: ThemeOptions = {
       main: slate[900],
     },
   },
-};
+}
 
 const themeOptionsManager: ThemeOptions = {
   palette: {
@@ -338,35 +338,35 @@ const themeOptionsManager: ThemeOptions = {
       main: indigo[600],
     },
   },
-};
+}
 
 const themeEmployee = createTheme(
   deepmerge(themeOptionsEmployee, themeOptionsBase),
-);
+)
 
 const themeManager = createTheme(
   deepmerge(themeOptionsManager, themeOptionsBase),
-);
+)
 
 type Props = PropsWithChildren<{
-  theme?: "default" | "manager";
-}>;
+  theme?: 'default' | 'manager'
+}>
 
-export const ThemeProvider = ({ children, theme = "default" }: Props) => {
-  const selectedTheme = theme === "manager" ? themeManager : themeEmployee;
+export function ThemeProvider({ children, theme = 'default' }: Props) {
+  const selectedTheme = theme === 'manager' ? themeManager : themeEmployee
 
   return (
     <MuiThemeProvider theme={selectedTheme}>
       <CssBaseline />
       <GlobalStyles
         styles={{
-          "#root": {
-            minHeight: "100dvh",
+          '#root': {
+            minHeight: '100dvh',
           },
-          html: { WebkitFontSmoothing: "auto" },
+          'html': { WebkitFontSmoothing: 'auto' },
         }}
       />
       {children}
     </MuiThemeProvider>
-  );
-};
+  )
+}

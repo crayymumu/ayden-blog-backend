@@ -1,35 +1,38 @@
-import { forwardRef, type ReactNode } from "react";
+import type { SxProps } from '@mui/material'
+import type { DatePickerProps } from '@mui/x-date-pickers/DatePicker'
+import type { ReactNode } from 'react'
 import {
+  Box,
   FormControl,
   FormHelperText,
   InputLabel,
-  Box,
-  type SxProps,
-} from "@mui/material";
-import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+} from '@mui/material'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {
   DatePicker,
-  type DatePickerProps,
-} from "@mui/x-date-pickers/DatePicker";
-import { DateIcon } from "@/icons";
 
-type Props = {
-  sx?: SxProps;
-  label?: string;
-  icon?: ReactNode;
-  value?: string;
-  disabled?: boolean;
-  name?: string;
-  placeholder?: string;
-  required?: boolean;
-  onBlur?: () => void;
-  onChange?: (date: string | null) => void;
-  loading?: boolean;
-  error?: string;
-  datePickerProps?: DatePickerProps<dayjs.Dayjs>;
-};
+} from '@mui/x-date-pickers/DatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import dayjs from 'dayjs'
+import { forwardRef } from 'react'
+import { DateIcon } from '@/icons'
+
+interface Props {
+  sx?: SxProps
+  label?: string
+  icon?: ReactNode
+  value?: string
+  disabled?: boolean
+  name?: string
+  placeholder?: string
+  required?: boolean
+  onBlur?: () => void
+  onChange?: (date: string | null) => void
+  loading?: boolean
+  error?: string
+  datePickerProps?: DatePickerProps<dayjs.Dayjs>
+}
 
 export const InputDate = forwardRef<HTMLDivElement, Props>(
   (props: Props, ref) => {
@@ -37,35 +40,35 @@ export const InputDate = forwardRef<HTMLDivElement, Props>(
       <FormControl
         variant="standard"
         sx={{
-          "& .MuiInputBase-root": {
-            width: "100%",
+          '& .MuiInputBase-root': {
+            width: '100%',
           },
 
-          "& .MuiInputBase-input": {
-            position: "relative",
-            border: "none",
-            borderRadius: "6px",
-            padding: "10px 12px",
-            fontSize: "14px",
-            color: (theme) => theme.palette.text.primary,
-            borderColor: (theme) => theme.palette.divider,
+          '& .MuiInputBase-input': {
+            position: 'relative',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '10px 12px',
+            fontSize: '14px',
+            color: theme => theme.palette.text.primary,
+            borderColor: theme => theme.palette.divider,
           },
 
-          "& .MuiIconButton-root": {
-            borderRadius: "6px",
+          '& .MuiIconButton-root': {
+            borderRadius: '6px',
           },
 
-          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderWidth: "1px",
-            borderColor: (theme) => theme.palette.divider,
+          '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderWidth: '1px',
+            borderColor: theme => theme.palette.divider,
           },
 
-          "& .MuiOutlinedInput-root": {
-            "&:active, &:focus-within": {
-              outlineStyle: "solid",
-              outlineOffset: "2px",
-              outlineWidth: "2px",
-              outlineColor: (theme) =>
+          '& .MuiOutlinedInput-root': {
+            '&:active, &:focus-within': {
+              outlineStyle: 'solid',
+              outlineOffset: '2px',
+              outlineWidth: '2px',
+              outlineColor: theme =>
                 props.error
                   ? `${theme.palette.error.main}`
                   : `${theme.palette.primary.main}`,
@@ -78,20 +81,20 @@ export const InputDate = forwardRef<HTMLDivElement, Props>(
           shrink
           required={props.required}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            color: props.icon ? "text.secondary" : "text.primary",
-            "& > svg": {
-              width: "22px",
-              height: "22px",
+            'display': 'flex',
+            'alignItems': 'center',
+            'gap': '8px',
+            'color': props.icon ? 'text.secondary' : 'text.primary',
+            '& > svg': {
+              width: '22px',
+              height: '22px',
             },
-            "&.Mui-focused": {
-              color: "text.primary",
+            '&.Mui-focused': {
+              color: 'text.primary',
             },
-            "& .MuiFormLabel-asterisk": {
-              marginLeft: "-4px",
-              color: (theme) => theme.palette.error.dark,
+            '& .MuiFormLabel-asterisk': {
+              marginLeft: '-4px',
+              color: theme => theme.palette.error.dark,
             },
           }}
         >
@@ -99,7 +102,7 @@ export const InputDate = forwardRef<HTMLDivElement, Props>(
           {props.label}
         </InputLabel>
         <Box
-          paddingLeft={props.icon ? "18px" : "0"}
+          paddingLeft={props.icon ? '18px' : '0'}
           paddingTop="24px"
           width="100%"
         >
@@ -111,14 +114,14 @@ export const InputDate = forwardRef<HTMLDivElement, Props>(
               onClose={props.onBlur}
               value={props.value ? dayjs(props.value) : null}
               onChange={(value: dayjs.Dayjs | null) => {
-                const date = value?.format("MM.DD.YYYY") || null;
-                props.onChange?.(date);
+                const date = value?.format('MM.DD.YYYY') || null
+                props.onChange?.(date)
               }}
               slots={{
                 openPickerIcon: () => <DateIcon />,
               }}
               sx={{
-                width: "100%",
+                width: '100%',
               }}
             />
           </LocalizationProvider>
@@ -128,13 +131,13 @@ export const InputDate = forwardRef<HTMLDivElement, Props>(
             variant="standard"
             error
             sx={{
-              marginTop: "4px",
+              marginTop: '4px',
             }}
           >
             {props.error}
           </FormHelperText>
         )}
       </FormControl>
-    );
+    )
   },
-);
+)

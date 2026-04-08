@@ -1,46 +1,48 @@
-import { useEffect } from "react";
-import { Link, useLocation } from "react-router";
-import { Box, Drawer, useMediaQuery, useTheme } from "@mui/material";
-import { RefineLogo } from "@/icons";
-import { useThemedLayoutContext } from "@refinedev/mui";
-import { UserSelect } from "./user-select";
-import { Menu } from "./menu";
+import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material'
+import { useThemedLayoutContext } from '@refinedev/mui'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router'
+import { RefineLogo } from '@/icons'
+import { Menu } from './menu'
+import { UserSelect } from './user-select'
 
-export const Sider = () => {
-  const location = useLocation();
+export function Sider() {
+  const location = useLocation()
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { mobileSiderOpen, setMobileSiderOpen } = useThemedLayoutContext();
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const { mobileSiderOpen, setMobileSiderOpen } = useThemedLayoutContext()
 
   useEffect(() => {
     if (mobileSiderOpen && isMobile) {
-      setMobileSiderOpen(false);
+      setMobileSiderOpen(false)
     }
-  }, [location]);
+  }, [location])
 
   return (
     <>
-      {isMobile ? (
-        <MobileSiderContent
-          open={mobileSiderOpen}
-          onClose={() => setMobileSiderOpen(false)}
-        />
-      ) : (
-        <SiderContent />
-      )}
+      {isMobile
+        ? (
+            <MobileSiderContent
+              open={mobileSiderOpen}
+              onClose={() => setMobileSiderOpen(false)}
+            />
+          )
+        : (
+            <SiderContent />
+          )}
     </>
-  );
-};
+  )
+}
 
-const MobileSiderContent = ({
+function MobileSiderContent({
   open,
   onClose,
 }: {
-  open: boolean;
-  onClose: () => void;
-}) => {
-  const theme = useTheme();
+  open: boolean
+  onClose: () => void
+}) {
+  const theme = useTheme()
 
   return (
     <Drawer
@@ -50,38 +52,38 @@ const MobileSiderContent = ({
       ModalProps={{
         keepMounted: true,
         sx: {
-          "& .MuiDrawer-paper": {
+          '& .MuiDrawer-paper': {
             borderRadius: 0,
             margin: 0,
-            height: "100%",
+            height: '100%',
           },
 
-          "& .MuiModal-backdrop": {
+          '& .MuiModal-backdrop': {
             backgroundColor: theme.palette.grey[900],
-            opacity: "0.8 !important",
+            opacity: '0.8 !important',
           },
         },
       }}
     >
       <SiderContent />
     </Drawer>
-  );
-};
+  )
+}
 
-const SiderContent = () => {
+function SiderContent() {
   return (
     <Box
       sx={{
-        px: "24px",
-        pt: "24px",
-        width: "240px",
-        minHeight: "100dvh",
-        borderRight: (theme) => `1px solid ${theme.palette.divider}`,
+        px: '24px',
+        pt: '24px',
+        width: '240px',
+        minHeight: '100dvh',
+        borderRight: theme => `1px solid ${theme.palette.divider}`,
       }}
     >
       <Box
         sx={{
-          height: "40px",
+          height: '40px',
         }}
       >
         <Link to="/">
@@ -90,12 +92,12 @@ const SiderContent = () => {
       </Box>
       <Box
         sx={{
-          marginTop: "24px",
+          marginTop: '24px',
         }}
       >
         <UserSelect />
         <Menu />
       </Box>
     </Box>
-  );
-};
+  )
+}

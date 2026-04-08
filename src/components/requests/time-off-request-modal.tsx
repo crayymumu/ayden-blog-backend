@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { useInvalidate, useList, useUpdate } from "@refinedev/core";
+import type { ReactNode } from 'react'
+import type { Employee, TimeOff } from '@/types'
 import {
   Avatar,
   Box,
@@ -7,77 +7,77 @@ import {
   Divider,
   Tooltip,
   Typography,
-} from "@mui/material";
-import dayjs from "dayjs";
-import { Modal } from "@/components/modal";
+} from '@mui/material'
+import { useInvalidate, useList, useUpdate } from '@refinedev/core'
+import dayjs from 'dayjs'
+import { Modal } from '@/components/modal'
+import { useGetEmployeeTimeOffUsage } from '@/hooks/use-get-employee-time-off-usage'
+import { RequestTypeIcon, ThumbsDownIcon, ThumbsUpIcon } from '@/icons'
 import {
+
   TimeOffStatus,
   TimeOffType,
-  type Employee,
-  type TimeOff,
-} from "@/types";
-import { RequestTypeIcon, ThumbsDownIcon, ThumbsUpIcon } from "@/icons";
-import { useGetEmployeeTimeOffUsage } from "@/hooks/use-get-employee-time-off-usage";
+} from '@/types'
 
-type Props = {
-  open: boolean;
-  onClose: () => void;
-  loading: boolean;
-  onSuccess?: () => void;
+interface Props {
+  open: boolean
+  onClose: () => void
+  loading: boolean
+  onSuccess?: () => void
   timeOff:
     | (TimeOff & {
-        employee: Employee;
-      })
+      employee: Employee
+    })
     | null
-    | undefined;
-};
+    | undefined
+}
 
-export const TimeOffRequestModal = ({
+export function TimeOffRequestModal({
   open,
   timeOff,
   loading: loadingFromProps,
   onClose,
   onSuccess,
-}: Props) => {
+}: Props) {
   const employeeUsedTimeOffs = useGetEmployeeTimeOffUsage({
     employeeId: timeOff?.employee.id,
-  });
+  })
 
-  const invalidate = useInvalidate();
+  const invalidate = useInvalidate()
 
-  const { mutateAsync } = useUpdate<TimeOff>();
+  const { mutateAsync } = useUpdate<TimeOff>()
 
-  const employee = timeOff?.employee;
-  const duration =
-    dayjs(timeOff?.endsAt).diff(dayjs(timeOff?.startsAt), "days") + 1;
-  const remainingAnnualLeaveDays =
-    (employee?.availableAnnualLeaveDays ?? 0) - duration;
+  const employee = timeOff?.employee
+  const duration
+    = dayjs(timeOff?.endsAt).diff(dayjs(timeOff?.startsAt), 'days') + 1
+  const remainingAnnualLeaveDays
+    = (employee?.availableAnnualLeaveDays ?? 0) - duration
 
   const {
     result: timeOffsData,
     query: { isLoading: timeOffsLoading },
   } = useList<TimeOff & { employee: Employee }>({
-    resource: "time-offs",
+    resource: 'time-offs',
     pagination: {
       pageSize: 999,
     },
     filters: [
       {
-        field: "status",
-        operator: "eq",
+        field: 'status',
+        operator: 'eq',
         value: TimeOffStatus.APPROVED,
       },
       {
-        operator: "and",
+        operator: 'and',
         value: [
           {
-            field: "startsAt",
-            operator: "lte",
+            field: 'startsAt',
+            operator: 'lte',
             value: timeOff?.endsAt,
           },
           {
-            field: "endsAt",
-            operator: "gte",
+            field: 'endsAt',
+            operator: 'gte',
             value: timeOff?.startsAt,
           },
         ],
@@ -87,29 +87,29 @@ export const TimeOffRequestModal = ({
       enabled: !!timeOff,
     },
     meta: {
-      join: ["employee"],
+      join: ['employee'],
     },
-  });
-  const whoIsOutList = timeOffsData?.data || [];
+  })
+  const whoIsOutList = timeOffsData?.data || []
 
   const handleSubmit = async (status: TimeOffStatus) => {
     await mutateAsync({
-      resource: "time-offs",
+      resource: 'time-offs',
       id: timeOff?.id,
-      invalidates: ["resourceAll"],
+      invalidates: ['resourceAll'],
       values: {
         status,
       },
-    });
+    })
 
-    onSuccess?.();
+    onSuccess?.()
     void invalidate({
-      resource: "employees",
-      invalidates: ["all"],
-    });
-  };
+      resource: 'employees',
+      invalidates: ['all'],
+    })
+  }
 
-  const loading = timeOffsLoading || loadingFromProps;
+  const loading = timeOffsLoading || loadingFromProps
 
   return (
     <Modal
@@ -117,24 +117,24 @@ export const TimeOffRequestModal = ({
       title="Time Off Request"
       loading={loading}
       sx={{
-        maxWidth: "520px",
+        maxWidth: '520px',
       }}
       onClose={onClose}
-      footer={
+      footer={(
         <>
           <Divider />
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "8px",
-              padding: "24px",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+              padding: '24px',
             }}
           >
             <Button
               sx={{
-                backgroundColor: (theme) => theme.palette.error.light,
+                backgroundColor: theme => theme.palette.error.light,
               }}
               startIcon={<ThumbsDownIcon />}
               onClick={() => void handleSubmit(TimeOffStatus.REJECTED)}
@@ -143,7 +143,7 @@ export const TimeOffRequestModal = ({
             </Button>
             <Button
               sx={{
-                backgroundColor: (theme) => theme.palette.success.light,
+                backgroundColor: theme => theme.palette.success.light,
               }}
               onClick={() => void handleSubmit(TimeOffStatus.APPROVED)}
               startIcon={<ThumbsUpIcon />}
@@ -152,30 +152,30 @@ export const TimeOffRequestModal = ({
             </Button>
           </Box>
         </>
-      }
+      )}
     >
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          padding: "24px",
-          backgroundColor: (theme) => theme.palette.grey[50],
-          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+          display: 'flex',
+          alignItems: 'center',
+          padding: '24px',
+          backgroundColor: theme => theme.palette.grey[50],
+          borderBottom: theme => `1px solid ${theme.palette.divider}`,
         }}
       >
         <Avatar
           src={employee?.avatarUrl}
           alt={employee?.firstName}
           sx={{
-            width: "80px",
-            height: "80px",
-            marginRight: "24px",
+            width: '80px',
+            height: '80px',
+            marginRight: '24px',
           }}
         />
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <Typography
@@ -184,7 +184,9 @@ export const TimeOffRequestModal = ({
             lineHeight="28px"
             fontWeight="500"
           >
-            {employee?.firstName} {employee?.lastName}
+            {employee?.firstName}
+            {' '}
+            {employee?.lastName}
           </Typography>
           <Typography variant="caption">{employee?.jobTitle}</Typography>
           <Typography variant="caption">{employee?.role}</Typography>
@@ -193,27 +195,29 @@ export const TimeOffRequestModal = ({
 
       <Box
         sx={{
-          padding: "24px",
+          padding: '24px',
         }}
       >
         <InfoRow
           loading={loading}
           label="Request Type"
-          value={
+          value={(
             <Box
               component="span"
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
               }}
             >
               <RequestTypeIcon type={timeOff?.timeOffType} />
               <Typography variant="body2" component="span">
-                {timeOff?.timeOffType} Leave
+                {timeOff?.timeOffType}
+                {' '}
+                Leave
               </Typography>
             </Box>
-          }
+          )}
         />
         <Divider />
         <InfoRow
@@ -226,9 +230,9 @@ export const TimeOffRequestModal = ({
           loading={loading}
           label={
             {
-              [TimeOffType.ANNUAL]: "Remaining Annual Leave Days",
-              [TimeOffType.SICK]: "Previously Used Sick Leave Days",
-              [TimeOffType.CASUAL]: "Previously Used Casual Leave Days",
+              [TimeOffType.ANNUAL]: 'Remaining Annual Leave Days',
+              [TimeOffType.SICK]: 'Previously Used Sick Leave Days',
+              [TimeOffType.CASUAL]: 'Previously Used Casual Leave Days',
             }[timeOff?.timeOffType ?? TimeOffType.ANNUAL]
           }
           value={
@@ -243,22 +247,22 @@ export const TimeOffRequestModal = ({
         <InfoRow
           loading={loading}
           label="Start Date"
-          value={dayjs(timeOff?.startsAt).format("MMMM DD")}
+          value={dayjs(timeOff?.startsAt).format('MMMM DD')}
         />
         <Divider />
         <InfoRow
           loading={loading}
           label="End Date"
-          value={dayjs(timeOff?.endsAt).format("MMMM DD")}
+          value={dayjs(timeOff?.endsAt).format('MMMM DD')}
         />
 
         <Divider />
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            paddingY: "24px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            paddingY: '24px',
           }}
         >
           <Typography variant="body2" fontWeight={600}>
@@ -267,21 +271,21 @@ export const TimeOffRequestModal = ({
           <Typography
             variant="body2"
             sx={{
-              height: "20px",
-              fontStyle: timeOff?.notes ? "normal" : "italic",
+              height: '20px',
+              fontStyle: timeOff?.notes ? 'normal' : 'italic',
             }}
           >
-            {!loading && (timeOff?.notes || "No notes provided.")}
+            {!loading && (timeOff?.notes || 'No notes provided.')}
           </Typography>
         </Box>
 
         <Divider />
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            paddingY: "24px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            paddingY: '24px',
           }}
         >
           <Typography variant="body2" fontWeight={600}>
@@ -289,92 +293,100 @@ export const TimeOffRequestModal = ({
           </Typography>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "8px",
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '8px',
             }}
           >
-            {whoIsOutList.length ? (
-              whoIsOutList.map((whoIsOut) => (
-                <Tooltip
-                  key={whoIsOut.id}
-                  sx={{
-                    "& .MuiTooltip-tooltip": {
-                      background: "red",
-                    },
-                  }}
-                  title={
-                    <Box
+            {whoIsOutList.length
+              ? (
+                  whoIsOutList.map(whoIsOut => (
+                    <Tooltip
+                      key={whoIsOut.id}
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "2px",
+                        '& .MuiTooltip-tooltip': {
+                          background: 'red',
+                        },
                       }}
+                      title={(
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px',
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {whoIsOut.employee.firstName}
+                            {' '}
+                            {whoIsOut.employee.lastName}
+                          </Typography>
+                          <Typography variant="caption">
+                            {whoIsOut.timeOffType}
+                            {' '}
+                            Leave
+                          </Typography>
+                          <Typography variant="caption">
+                            {dayjs(whoIsOut.startsAt).format('MMMM DD')}
+                            {' '}
+                            -
+                            {' '}
+                            {dayjs(whoIsOut.endsAt).format('MMMM DD')}
+                          </Typography>
+                        </Box>
+                      )}
+                      placement="top"
                     >
-                      <Typography variant="body2">
-                        {whoIsOut.employee.firstName}{" "}
-                        {whoIsOut.employee.lastName}
-                      </Typography>
-                      <Typography variant="caption">
-                        {whoIsOut.timeOffType} Leave
-                      </Typography>
-                      <Typography variant="caption">
-                        {dayjs(whoIsOut.startsAt).format("MMMM DD")} -{" "}
-                        {dayjs(whoIsOut.endsAt).format("MMMM DD")}
-                      </Typography>
-                    </Box>
-                  }
-                  placement="top"
-                >
-                  <Avatar
-                    src={whoIsOut.employee.avatarUrl}
-                    alt={whoIsOut.employee.firstName}
+                      <Avatar
+                        src={whoIsOut.employee.avatarUrl}
+                        alt={whoIsOut.employee.firstName}
+                        sx={{
+                          width: '32px',
+                          height: '32px',
+                        }}
+                      />
+                    </Tooltip>
+                  ))
+                )
+              : (
+                  <Typography
+                    variant="body2"
                     sx={{
-                      width: "32px",
-                      height: "32px",
+                      height: '32px',
+                      fontStyle: 'italic',
                     }}
-                  />
-                </Tooltip>
-              ))
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{
-                  height: "32px",
-                  fontStyle: "italic",
-                }}
-              >
-                {loading ? "" : "No one is out between these days."}
-              </Typography>
-            )}
+                  >
+                    {loading ? '' : 'No one is out between these days.'}
+                  </Typography>
+                )}
           </Box>
         </Box>
       </Box>
     </Modal>
-  );
-};
+  )
+}
 
-const InfoRow = ({
+function InfoRow({
   label,
   value,
   loading,
 }: {
-  label: ReactNode;
-  value: ReactNode;
-  loading: boolean;
-}) => {
+  label: ReactNode
+  value: ReactNode
+  loading: boolean
+}) {
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        paddingY: "24px",
-        height: "72px",
+        display: 'flex',
+        justifyContent: 'space-between',
+        paddingY: '24px',
+        height: '72px',
       }}
     >
       <Typography variant="body2">{label}</Typography>
-      <Typography variant="body2">{loading ? "" : value}</Typography>
+      <Typography variant="body2">{loading ? '' : value}</Typography>
     </Box>
-  );
-};
+  )
+}

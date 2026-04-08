@@ -1,38 +1,38 @@
-import { type HttpError } from "@refinedev/core";
-import { useForm } from "@refinedev/react-hook-form";
-import { Controller } from "react-hook-form";
+import type { HttpError } from '@refinedev/core'
+import type { Tag } from '@/types'
 import {
   Box,
   Button,
-  TextField,
-  MenuItem,
-  Select,
   FormControl,
   InputLabel,
+  MenuItem,
   Paper,
-} from "@mui/material";
-import { PageHeader } from "@/components/layout/page-header";
-import { LoadingOverlay } from "@/components/loading-overlay";
-import { Tag } from "@/types";
+  Select,
+  TextField,
+} from '@mui/material'
+import { useForm } from '@refinedev/react-hook-form'
+import { Controller } from 'react-hook-form'
+import { PageHeader } from '@/components/layout/page-header'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
-type FormValues = Omit<Tag, "id" | "time">;
+type FormValues = Omit<Tag, 'id' | 'time'>
 
-export const PageTagEdit = () => {
+export function PageTagEdit() {
   const {
     refineCore: { formLoading, onFinish, query },
     control,
     handleSubmit,
   } = useForm<Tag, HttpError, FormValues>({
     refineCoreProps: {
-      resource: "tags",
-      action: "edit",
-      meta: { dataProviderName: "blog" },
+      resource: 'tags',
+      action: 'edit',
+      meta: { dataProviderName: 'blog' },
     },
-  });
+  })
 
   const onFinishHandler = async (values: FormValues) => {
-    await onFinish(values);
-  };
+    await onFinish(values)
+  }
 
   return (
     <LoadingOverlay loading={!!(formLoading || query?.isLoading)}>
@@ -43,13 +43,12 @@ export const PageTagEdit = () => {
           component="form"
           variant="outlined"
           onSubmit={(e: React.FormEvent) =>
-            void handleSubmit(onFinishHandler)(e)
-          }
+            void handleSubmit(onFinishHandler)(e)}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px",
-            mt: "24px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            mt: '24px',
             p: 3,
             borderRadius: 2,
             maxWidth: 600,
@@ -58,7 +57,7 @@ export const PageTagEdit = () => {
           <Controller
             name="name"
             control={control}
-            rules={{ required: "名称必填" }}
+            rules={{ required: '名称必填' }}
             render={({ field, fieldState }) => (
               <TextField
                 {...field}
@@ -92,7 +91,7 @@ export const PageTagEdit = () => {
             )}
           />
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button variant="contained" size="large" type="submit">
               保存
             </Button>
@@ -100,5 +99,5 @@ export const PageTagEdit = () => {
         </Paper>
       </Box>
     </LoadingOverlay>
-  );
-};
+  )
+}

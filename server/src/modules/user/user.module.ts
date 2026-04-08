@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
-import { UserController } from "./user.controller";
-import { UserService } from "./user.service";
-import { RolesGuard } from "../../common/guards/roles.guard";
-import { APP_GUARD } from "@nestjs/core";
+import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
+import { RolesGuard } from '../../common/guards/roles.guard'
+import { UserController } from './user.controller'
+import { UserService } from './user.service'
 
 @Module({
   controllers: [UserController],

@@ -1,66 +1,87 @@
-import type { AuthProvider } from "@refinedev/core";
-import { authClient } from "@/lib/auth-client";
+import type { AuthProvider } from '@refinedev/core'
+import ky from 'ky'
+import { authClient } from '@/lib/auth-client'
+import { BLOG_API_URL } from '@/utilities/constants'
+
+let cachedPermissions: { roles: string[], permissions: string[] } | null = null
 
 export const authProvider: AuthProvider = {
-  login: async ({ email, password }: { email: string; password: string }) => {
+  login: async ({ email, password }: { email: string, password: string }) => {
     const { data, error } = await authClient.signIn.email({
       email,
       password,
-    });
+    })
 
     if (error || !data) {
       return {
         success: false,
         error: {
-          message: error?.message ?? "登录失败",
-          name: "登录错误",
+          message: error?.message ?? '登录失败',
+          name: '登录错误',
         },
-      };
+      }
     }
 
+    cachedPermissions = null
     return {
       success: true,
-      redirectTo: "/",
-    };
+      redirectTo: '/',
+    }
   },
   register: async () => {
-    throw new Error("Not implemented");
+    throw new Error('Not implemented')
   },
   logout: async () => {
-    await authClient.signOut();
+    cachedPermissions = null
+    await authClient.signOut()
     return {
       success: true,
-      redirectTo: "/login",
-    };
+      redirectTo: '/login',
+    }
   },
   onError: async (httpError: unknown) => {
-    const err = httpError as { response?: { status?: number } };
+    const err = httpError as { response?: { status?: number } }
     if (err?.response?.status === 401) {
-      return { logout: true };
+      return { logout: true }
     }
-    return {};
+    return {}
   },
   check: async () => {
-    const { data } = await authClient.getSession();
+    const { data } = await authClient.getSession()
     if (data?.session) {
-      return { authenticated: true };
+      return { authenticated: true }
     }
     return {
       authenticated: false,
       error: {
-        message: "Check failed",
-        name: "Not authenticated",
+        message: 'Check failed',
+        name: 'Not authenticated',
       },
       logout: true,
-      redirectTo: "/login",
-    };
+      redirectTo: '/login',
+    }
   },
   getPermissions: async () => {
-    return {};
+    if (cachedPermissions)
+      return cachedPermissions
+    try {
+      const res = await ky
+        .get('user/role/my-permissions', {
+          prefixUrl: BLOG_API_URL,
+          credentials: 'include',
+        })
+        .json<{ data: { roles: string[], permissions: string[] } }>()
+      cachedPermissions = res.data
+      return cachedPermissions
+    }
+    catch {
+      return { roles: [], permissions: [] }
+    }
   },
   getIdentity: async () => {
-    const { data } = await authClient.getSession();
-    if (!data?.user) return null;
-    return data.user;
+    const { data } = await authClient.getSession()
+    if (!data?.user)
+      return null
+    return data.user
   },
-};
+}

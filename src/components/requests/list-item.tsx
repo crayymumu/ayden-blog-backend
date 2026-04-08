@@ -1,17 +1,17 @@
-import { Box, Typography, Avatar, Button } from "@mui/material";
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
+import { Avatar, Box, Button, Typography } from '@mui/material'
 
-type Props = {
-  date: string;
-  avatarURL: string;
-  title: string;
-  descriptionIcon?: ReactNode;
-  description: string;
-  onClick?: () => void;
-  showTimeSince?: boolean;
-};
+interface Props {
+  date: string
+  avatarURL: string
+  title: string
+  descriptionIcon?: ReactNode
+  description: string
+  onClick?: () => void
+  showTimeSince?: boolean
+}
 
-export const RequestsListItem = ({
+export function RequestsListItem({
   date,
   avatarURL,
   title,
@@ -19,24 +19,24 @@ export const RequestsListItem = ({
   description,
   onClick,
   showTimeSince,
-}: Props) => {
+}: Props) {
   return (
     <Box
       role="button"
       onClick={onClick}
-      sx={(theme) => ({
-        cursor: "pointer",
-        paddingRight: "24px",
-        paddingLeft: "24px",
+      sx={theme => ({
+        'cursor': 'pointer',
+        'paddingRight': '24px',
+        'paddingLeft': '24px',
 
-        paddingTop: "4px",
-        paddingBottom: "4px",
-        [theme.breakpoints.up("sm")]: {
-          paddingTop: "12px",
-          paddingBottom: "12px",
+        'paddingTop': '4px',
+        'paddingBottom': '4px',
+        [theme.breakpoints.up('sm')]: {
+          paddingTop: '12px',
+          paddingBottom: '12px',
         },
 
-        "&:hover": {
+        '&:hover': {
           backgroundColor: theme.palette.action.hover,
         },
       })}
@@ -44,7 +44,7 @@ export const RequestsListItem = ({
       {showTimeSince && (
         <Box
           sx={{
-            marginBottom: "8px",
+            marginBottom: '8px',
           }}
         >
           <Typography variant="caption" color="textSecondary">
@@ -54,26 +54,26 @@ export const RequestsListItem = ({
       )}
       <Box
         sx={{
-          display: "flex",
+          display: 'flex',
         }}
       >
         <Avatar
           src={avatarURL}
           alt={title}
-          sx={{ width: "48px", height: "48px" }}
+          sx={{ width: '48px', height: '48px' }}
         />
         <Box
-          sx={(theme) => ({
-            height: "auto",
-            [theme.breakpoints.up("md")]: {
-              height: "48px",
+          sx={theme => ({
+            height: 'auto',
+            [theme.breakpoints.up('md')]: {
+              height: '48px',
             },
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            gap: "4px",
-            marginLeft: "16px",
+            width: '100%',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            gap: '4px',
+            marginLeft: '16px',
           })}
         >
           <Box>
@@ -82,10 +82,10 @@ export const RequestsListItem = ({
             </Typography>
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                minWidth: "260px",
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                minWidth: '260px',
               }}
             >
               {descriptionIcon}
@@ -101,9 +101,9 @@ export const RequestsListItem = ({
               color="inherit"
               onClick={onClick}
               sx={{
-                alignSelf: "flex-start",
+                alignSelf: 'flex-start',
                 flexShrink: 0,
-                marginLeft: "auto",
+                marginLeft: 'auto',
               }}
             >
               View Request
@@ -112,5 +112,5 @@ export const RequestsListItem = ({
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}

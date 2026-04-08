@@ -1,0 +1,135 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/photos-client"
+}
+
+model PImage {
+  id               String               @id @default(cuid()) @db.VarChar(50)
+  imageName        String?              @map("image_name") @db.Text
+  url              String?              @db.Text
+  previewUrl       String?              @map("preview_url") @db.Text
+  videoUrl         String?              @map("video_url") @db.Text
+  originalKey      String?              @map("original_key") @db.Text
+  previewKey       String?              @map("preview_key") @db.Text
+  videoKey         String?              @map("video_key") @db.Text
+  blurhash         String?              @db.Text
+  exif             Json?                @db.Json
+  labels           Json?                @db.Json
+  width            Int                  @default(0)
+  height           Int                  @default(0)
+  lon              String?
+  lat              String?
+  title            String?              @db.VarChar(200)
+  detail           String?              @db.Text
+  type             Int                  @default(1) @db.SmallInt
+  show             Int                  @default(1) @db.SmallInt
+  showOnMainpage   Int                  @default(1) @map("show_on_mainpage") @db.SmallInt
+  featured         Int                  @default(0) @db.SmallInt
+  sort             Int                  @default(0) @db.SmallInt
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamp
+  updatedAt        DateTime?            @updatedAt @map("updated_at") @db.Timestamp
+  del              Int                  @default(0) @db.SmallInt
+  albumRelations   PImageAlbumRelation[]
+  tagRelations     PImageTagRelation[]
+
+  @@index([del, show])
+  @@index([featured])
+  @@index([createdAt])
+  @@index([show, showOnMainpage])
+  @@index([del, show, featured])
+  @@map("p_images")
+}
+
+model PAlbum {
+  id             String               @id @default(cuid()) @db.VarChar(50)
+  name           String               @db.VarChar(200)
+  albumValue     String               @unique @map("album_value") @db.Text
+  detail         String?              @db.Text
+  theme          String               @default("0") @db.Text
+  show           Int                  @default(1) @db.SmallInt
+  sort           Int                  @default(0) @db.SmallInt
+  randomShow     Int                  @default(1) @map("random_show") @db.SmallInt
+  license        String?              @db.Text
+  createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamp
+  updatedAt      DateTime?            @updatedAt @map("updated_at") @db.Timestamp
+  del            Int                  @default(0) @db.SmallInt
+  imageSorting   Int                  @default(1) @map("image_sorting") @db.SmallInt
+  cover          String?              @db.Text
+  imageRelations PImageAlbumRelation[]
+
+  @@index([del, show])
+  @@index([albumValue])
+  @@map("p_albums")
+}
+
+model PImageAlbumRelation {
+  album      PAlbum @relation(fields: [albumValue], references: [albumValue])
+  albumValue String @map("album_value") @db.Text
+  image      PImage @relation(fields: [imageId], references: [id])
+  imageId    String @map("image_id") @db.VarChar(50)
+
+  @@id([imageId, albumValue])
+  @@index([imageId])
+  @@index([albumValue])
+  @@map("p_images_albums_relation")
+}
+
+model PTag {
+  id        String              @id @default(cuid()) @db.VarChar(50)
+  name      String              @unique @db.VarChar(200)
+  category  String?             @db.VarChar(200)
+  parentId  String?             @map("parent_id") @db.VarChar(50)
+  parent    PTag?               @relation("PTagChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  children  PTag[]              @relation("PTagChildren")
+  detail    String?             @db.Text
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamp
+  updatedAt DateTime?           @updatedAt @map("updated_at") @db.Timestamp
+  images    PImageTagRelation[]
+
+  @@map("p_tags")
+}
+
+model PImageTagRelation {
+  id        String   @id @default(cuid()) @db.VarChar(50)
+  imageId   String   @map("image_id") @db.VarChar(50)
+  tagId     String   @map("tag_id") @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp
+
+  image PImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  tag   PTag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([imageId, tagId])
+  @@index([imageId])
+  @@index([tagId])
+  @@map("p_images_tags_relation")
+}
+
+model PConfig {
+  id          String    @id @default(cuid()) @db.VarChar(50)
+  configKey   String    @unique @map("config_key") @db.VarChar(200)
+  configValue String?   @map("config_value") @db.Text
+  detail      String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamp
+
+  @@map("p_configs")
+}
+
+model PVisitLog {
+  id        String   @id @default(cuid()) @db.VarChar(50)
+  path      String   @db.Text
+  pageType  String   @map("page_type") @db.VarChar(50)
+  ip        String?  @db.VarChar(100)
+  userAgent String?  @map("user_agent") @db.Text
+  referrer  String?  @db.Text
+  source    String?  @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp
+
+  @@index([createdAt])
+  @@index([path])
+  @@map("p_visit_log")
+}

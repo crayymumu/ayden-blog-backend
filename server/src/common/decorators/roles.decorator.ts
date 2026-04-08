@@ -1,5 +1,6 @@
-import { SetMetadata } from "@nestjs/common";
+import { SetMetadata } from '@nestjs/common'
 
-export const ROLES_KEY = "roles";
-export const Roles = (...roles: string[]): ReturnType<typeof SetMetadata> =>
-  SetMetadata(ROLES_KEY, roles);
+export const ROLES_KEY = 'roles'
+export function Roles(...roles: string[]): ReturnType<typeof SetMetadata> {
+  return SetMetadata(ROLES_KEY, roles)
+}

@@ -1,0 +1,30 @@
+{
+  "p_configs": {
+    "source": 46,
+    "target": 46
+  },
+  "p_albums": {
+    "source": 13,
+    "target": 13
+  },
+  "p_tags": {
+    "source": 8,
+    "target": 8
+  },
+  "p_images": {
+    "source": 178,
+    "target": 178
+  },
+  "p_images_albums_relation": {
+    "source": 178,
+    "target": 178
+  },
+  "p_images_tags_relation": {
+    "source": 0,
+    "target": 0
+  },
+  "p_visit_log": {
+    "source": 3146,
+    "target": 3146
+  }
+}

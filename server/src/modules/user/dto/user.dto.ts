@@ -1,41 +1,41 @@
-import { IsOptional, IsString, IsInt } from "class-validator";
+import { IsInt, IsOptional, IsString } from 'class-validator'
 
 export class CreateUserDto {
   @IsString()
-  name!: string;
+  name!: string
 
   @IsString()
-  email!: string;
+  email!: string
 
   @IsString()
-  password!: string;
+  password!: string
 
   @IsOptional()
   @IsString()
-  nickname?: string;
+  nickname?: string
 }
 
 export class UpdateUserDto {
   @IsString()
-  id!: string;
+  id!: string
 
   @IsOptional()
   @IsString()
-  name?: string;
+  name?: string
 
   @IsOptional()
   @IsString()
-  email?: string;
+  email?: string
 
   @IsOptional()
   @IsString()
-  nickname?: string;
+  nickname?: string
 
   @IsOptional()
   @IsString()
-  image?: string;
+  image?: string
 
   @IsOptional()
   @IsInt()
-  flag?: number;
+  flag?: number
 }

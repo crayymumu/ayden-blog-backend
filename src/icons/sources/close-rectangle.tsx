@@ -1,6 +1,6 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from 'react'
 
-export const CloseRectancleIcon = (props: SVGProps<SVGSVGElement>) => {
+export function CloseRectancleIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,5 +21,5 @@ export const CloseRectancleIcon = (props: SVGProps<SVGSVGElement>) => {
         d="M1.667 8c0-2.986 0-4.479.927-5.406.928-.928 2.42-.928 5.406-.928 2.986 0 4.478 0 5.406.928.927.927.927 2.42.927 5.405 0 2.986 0 4.479-.927 5.406-.928.928-2.42.928-5.406.928-2.986 0-4.478 0-5.406-.928-.927-.927-.927-2.42-.927-5.406Z"
       />
     </svg>
-  );
-};
+  )
+}

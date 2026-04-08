@@ -1,6 +1,6 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from 'react'
 
-export const CheckRectangleIcon = (props: SVGProps<SVGSVGElement>) => {
+export function CheckRectangleIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,5 +21,5 @@ export const CheckRectangleIcon = (props: SVGProps<SVGSVGElement>) => {
         d="M5.333 8.333 7 10l3.666-4"
       />
     </svg>
-  );
-};
+  )
+}

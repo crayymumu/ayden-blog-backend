@@ -1,27 +1,27 @@
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Divider, Typography } from '@mui/material'
 
-type Props = {
-  availableAnnualDays: number;
-  requestedDays: number;
-};
+interface Props {
+  availableAnnualDays: number
+  requestedDays: number
+}
 
-export const TimeOffFormSummary = (props: Props) => {
-  const remainingDays = props.availableAnnualDays - props.requestedDays;
+export function TimeOffFormSummary(props: Props) {
+  const remainingDays = props.availableAnnualDays - props.requestedDays
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        gap: "16px",
-        whiteSpace: "nowrap",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        gap: '16px',
+        whiteSpace: 'nowrap',
       }}
     >
       <Box
         sx={{
-          display: "flex",
-          gap: "16px",
+          display: 'flex',
+          gap: '16px',
         }}
       >
         <Typography variant="body2" color="text.secondary">
@@ -32,8 +32,8 @@ export const TimeOffFormSummary = (props: Props) => {
 
       <Box
         sx={{
-          display: "flex",
-          gap: "16px",
+          display: 'flex',
+          gap: '16px',
         }}
       >
         <Typography variant="body2" color="text.secondary">
@@ -44,14 +44,14 @@ export const TimeOffFormSummary = (props: Props) => {
 
       <Divider
         sx={{
-          width: "100%",
+          width: '100%',
         }}
       />
       <Box
         sx={{
-          display: "flex",
-          gap: "16px",
-          height: "40px",
+          display: 'flex',
+          gap: '16px',
+          height: '40px',
         }}
       >
         <Typography variant="body2" color="text.secondary">
@@ -62,5 +62,5 @@ export const TimeOffFormSummary = (props: Props) => {
         </Typography>
       </Box>
     </Box>
-  );
-};
+  )
+}

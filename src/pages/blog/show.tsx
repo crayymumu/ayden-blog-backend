@@ -1,45 +1,48 @@
-import { useShow } from "@refinedev/core";
+import type { Blog } from '@/types'
 import {
   Box,
-  Typography,
   Chip,
-  Stack,
-  Paper,
   Divider,
   Grid2 as Grid,
-} from "@mui/material";
-import { ViewIcon, StarIcon, DateIcon, UpdateIcon } from "@/icons/sources";
-import { PageHeader } from "@/components/layout/page-header";
-import { LoadingOverlay } from "@/components/loading-overlay";
-import { Blog } from "@/types";
-import dayjs from "dayjs";
+  Paper,
+  Stack,
+  Typography,
+} from '@mui/material'
+import { useShow } from '@refinedev/core'
+import dayjs from 'dayjs'
+import { PageHeader } from '@/components/layout/page-header'
+import { LoadingOverlay } from '@/components/loading-overlay'
+import { DateIcon, StarIcon, UpdateIcon, ViewIcon } from '@/icons/sources'
 
-const MetaItem = ({
+function MetaItem({
   icon,
   label,
   value,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-}) => (
-  <Stack direction="row" spacing={1} alignItems="center">
-    {icon}
-    <Typography variant="body2" color="text.secondary">
-      {label}:
-    </Typography>
-    <Typography variant="body2">{value}</Typography>
-  </Stack>
-);
+  icon: React.ReactNode
+  label: string
+  value: React.ReactNode
+}) {
+  return (
+    <Stack direction="row" spacing={1} alignItems="center">
+      {icon}
+      <Typography variant="body2" color="text.secondary">
+        {label}
+        :
+      </Typography>
+      <Typography variant="body2">{value}</Typography>
+    </Stack>
+  )
+}
 
-export const PageBlogShow = () => {
+export function PageBlogShow() {
   const { query } = useShow<Blog>({
-    resource: "blogs",
-    meta: { dataProviderName: "blog" },
-  });
+    resource: 'blogs',
+    meta: { dataProviderName: 'blog' },
+  })
 
-  const { data, isLoading } = query;
-  const record = data?.data;
+  const { data, isLoading } = query
+  const record = data?.data
 
   return (
     <LoadingOverlay loading={isLoading}>
@@ -71,35 +74,35 @@ export const PageBlogShow = () => {
                 <MetaItem
                   icon={<DateIcon />}
                   label="创建"
-                  value={dayjs(record.createTime).format("YYYY-MM-DD HH:mm")}
+                  value={dayjs(record.createTime).format('YYYY-MM-DD HH:mm')}
                 />
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <MetaItem
                   icon={<UpdateIcon />}
                   label="更新"
-                  value={dayjs(record.updateTime).format("YYYY-MM-DD HH:mm")}
+                  value={dayjs(record.updateTime).format('YYYY-MM-DD HH:mm')}
                 />
               </Grid>
             </Grid>
 
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
               <Chip
-                label={record.source === 0 ? "原创" : "转载"}
+                label={record.source === 0 ? '原创' : '转载'}
                 size="small"
                 color="primary"
                 variant="outlined"
               />
               <Chip
-                label={record.level === 0 ? "普通" : "置顶"}
+                label={record.level === 0 ? '普通' : '置顶'}
                 size="small"
                 color="secondary"
                 variant="outlined"
               />
               <Chip
-                label={record.flag === 0 ? "正常" : "禁用"}
+                label={record.flag === 0 ? '正常' : '禁用'}
                 size="small"
-                color={record.flag === 0 ? "success" : "default"}
+                color={record.flag === 0 ? 'success' : 'default'}
               />
             </Stack>
 
@@ -109,7 +112,7 @@ export const PageBlogShow = () => {
                   分类
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {record.categories.map((cat) => (
+                  {record.categories.map(cat => (
                     <Chip
                       key={cat.id}
                       label={cat.name}
@@ -127,7 +130,7 @@ export const PageBlogShow = () => {
                   标签
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {record.tags.map((tag) => (
+                  {record.tags.map(tag => (
                     <Chip
                       key={tag.id}
                       label={tag.name}
@@ -154,12 +157,12 @@ export const PageBlogShow = () => {
             </Typography>
             <Box
               sx={{
-                p: 2,
-                borderLeft: 4,
-                borderColor: "primary.main",
-                bgcolor: "grey.50",
-                borderRadius: 1,
-                "& pre": { whiteSpace: "pre-wrap" },
+                'p': 2,
+                'borderLeft': 4,
+                'borderColor': 'primary.main',
+                'bgcolor': 'grey.50',
+                'borderRadius': 1,
+                '& pre': { whiteSpace: 'pre-wrap' },
               }}
               dangerouslySetInnerHTML={{ __html: record.content }}
             />
@@ -167,5 +170,5 @@ export const PageBlogShow = () => {
         )}
       </Box>
     </LoadingOverlay>
-  );
-};
+  )
+}

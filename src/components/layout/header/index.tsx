@@ -1,34 +1,34 @@
-import { Link } from "react-router";
-import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
-import { useThemedLayoutContext } from "@refinedev/mui";
-import { HandleIcon, RefineLogo } from "@/icons";
+import { Box, IconButton, useMediaQuery, useTheme } from '@mui/material'
+import { useThemedLayoutContext } from '@refinedev/mui'
+import { Link } from 'react-router'
+import { HandleIcon, RefineLogo } from '@/icons'
 
-export const Header = () => {
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
-  const { setMobileSiderOpen } = useThemedLayoutContext();
+export function Header() {
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+  const { setMobileSiderOpen } = useThemedLayoutContext()
 
   if (isDesktop) {
-    return null;
+    return null
   }
 
   return (
     <Box
       sx={{
-        position: "relative",
-        width: "100%",
-        px: "16px",
-        height: "64px",
-        borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        position: 'relative',
+        width: '100%',
+        px: '16px',
+        height: '64px',
+        borderBottom: theme => `1px solid ${theme.palette.divider}`,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <IconButton
         sx={{
-          position: "absolute",
-          left: "16px",
+          position: 'absolute',
+          left: '16px',
           backgroundColor: theme.palette.grey[100],
         }}
         onClick={() => setMobileSiderOpen(true)}
@@ -37,7 +37,7 @@ export const Header = () => {
       </IconButton>
       <Box
         sx={{
-          height: "40px",
+          height: '40px',
         }}
       >
         <Link to="/">
@@ -46,5 +46,5 @@ export const Header = () => {
       </Box>
       <Box />
     </Box>
-  );
-};
+  )
+}

@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../../prisma/prisma.service";
-import { UpdateUserDto } from "./dto/user.dto";
+import type { UpdateUserDto } from './dto/user.dto'
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { name: string; email: string; nickname?: string }) {
+  async create(data: { name: string, email: string, nickname?: string }) {
     return this.prisma.bUser.create({
       data: {
         id: crypto.randomUUID(),
@@ -16,51 +16,51 @@ export class UserService {
         emailVerified: false,
         updatedAt: new Date(),
       },
-    });
+    })
   }
 
   async remove(id: string) {
-    return this.prisma.bUser.delete({ where: { id } });
+    return this.prisma.bUser.delete({ where: { id } })
   }
 
   async update(dto: UpdateUserDto) {
-    const { id, ...data } = dto;
-    return this.prisma.bUser.update({ where: { id }, data });
+    const { id, ...data } = dto
+    return this.prisma.bUser.update({ where: { id }, data })
   }
 
   async findOne(id: string) {
-    return this.prisma.bUser.findUnique({ where: { id } });
+    return this.prisma.bUser.findUnique({ where: { id } })
   }
 
   async findAll(page: number, size: number) {
-    const skip = (page - 1) * size;
+    const skip = (page - 1) * size
     const [list, total] = await Promise.all([
       this.prisma.bUser.findMany({
         skip,
         take: size,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.bUser.count(),
-    ]);
-    return { list, total };
+    ])
+    return { list, total }
   }
 
   async findByToken(token: string) {
     const session = await this.prisma.bSession.findUnique({
       where: { token },
       include: { user: true },
-    });
-    return session?.user ?? null;
+    })
+    return session?.user ?? null
   }
 
   async allCount() {
-    return this.prisma.bUser.count();
+    return this.prisma.bUser.count()
   }
 
   async resetPassword(userId: string) {
     return this.prisma.bAccount.updateMany({
-      where: { userId, providerId: "credential" },
+      where: { userId, providerId: 'credential' },
       data: { password: null },
-    });
+    })
   }
 }

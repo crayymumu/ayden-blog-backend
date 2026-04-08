@@ -1,6 +1,5 @@
-import { useGo, useDelete } from "@refinedev/core";
-import { useDataGrid } from "@refinedev/mui";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import type { GridColDef } from '@mui/x-data-grid'
+import type { Tag } from '@/types'
 import {
   Box,
   Button,
@@ -9,23 +8,25 @@ import {
   Paper,
   Skeleton,
   Stack,
-} from "@mui/material";
-import { pencil as PencilIcon, DeleteIcon } from "@/icons/sources";
-import { PageHeader } from "@/components/layout/page-header";
-import { Tag } from "@/types";
-import dayjs from "dayjs";
+} from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+import { useDelete, useGo } from '@refinedev/core'
+import { useDataGrid } from '@refinedev/mui'
+import dayjs from 'dayjs'
+import { PageHeader } from '@/components/layout/page-header'
+import { DeleteIcon, pencil as PencilIcon } from '@/icons/sources'
 
-const TableSkeleton = () => {
-  const headerWidths = [70, 150, 200, 160, 100, 120];
+function TableSkeleton() {
+  const headerWidths = [70, 150, 200, 160, 100, 120]
   return (
-    <Paper variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+    <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
+          display: 'flex',
+          alignItems: 'center',
           height: 56,
-          borderBottom: "1px solid rgba(224, 224, 224, 1)",
-          backgroundColor: "#fafafa",
+          borderBottom: '1px solid rgba(224, 224, 224, 1)',
+          backgroundColor: '#fafafa',
           px: 2,
           gap: 2,
         }}
@@ -37,7 +38,7 @@ const TableSkeleton = () => {
             width={w}
             height={14}
             sx={{
-              borderRadius: "2px",
+              borderRadius: '2px',
               flexShrink: 0,
               flexGrow: i === 1 || i === 2 ? 1 : 0,
             }}
@@ -48,11 +49,11 @@ const TableSkeleton = () => {
         <Box
           key={rowIdx}
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             height: 52,
             borderBottom:
-              rowIdx < 5 ? "1px solid rgba(224, 224, 224, 1)" : "none",
+              rowIdx < 5 ? '1px solid rgba(224, 224, 224, 1)' : 'none',
             px: 2,
             gap: 2,
           }}
@@ -61,23 +62,23 @@ const TableSkeleton = () => {
             variant="rectangular"
             width={40}
             height={14}
-            sx={{ borderRadius: "2px", flexShrink: 0 }}
+            sx={{ borderRadius: '2px', flexShrink: 0 }}
           />
           <Skeleton
             variant="rectangular"
             height={14}
-            sx={{ borderRadius: "2px", flex: 1, minWidth: 100 }}
+            sx={{ borderRadius: '2px', flex: 1, minWidth: 100 }}
           />
           <Skeleton
             variant="rectangular"
             height={14}
-            sx={{ borderRadius: "2px", flex: 2, minWidth: 120 }}
+            sx={{ borderRadius: '2px', flex: 2, minWidth: 120 }}
           />
           <Skeleton
             variant="rectangular"
             width={120}
             height={14}
-            sx={{ borderRadius: "2px", flexShrink: 0 }}
+            sx={{ borderRadius: '2px', flexShrink: 0 }}
           />
           <Skeleton
             variant="rounded"
@@ -92,46 +93,46 @@ const TableSkeleton = () => {
         </Box>
       ))}
     </Paper>
-  );
-};
+  )
+}
 
-export const PageTagList = () => {
-  const go = useGo();
-  const { mutate } = useDelete();
+export function PageTagList() {
+  const go = useGo()
+  const { mutate } = useDelete()
 
   const { dataGridProps } = useDataGrid<Tag>({
-    resource: "tags",
-    meta: { dataProviderName: "blog" },
-  });
+    resource: 'tags',
+    meta: { dataProviderName: 'blog' },
+  })
 
-  const isLoading = dataGridProps.loading;
+  const isLoading = dataGridProps.loading
 
   const columns: GridColDef<Tag>[] = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "名称", flex: 1, minWidth: 150 },
-    { field: "description", headerName: "描述", flex: 2, minWidth: 200 },
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'name', headerName: '名称', flex: 1, minWidth: 150 },
+    { field: 'description', headerName: '描述', flex: 2, minWidth: 200 },
     {
-      field: "time",
-      headerName: "创建时间",
+      field: 'time',
+      headerName: '创建时间',
       width: 160,
       renderCell: ({ value }) =>
-        dayjs(value as string).format("YYYY-MM-DD HH:mm"),
+        dayjs(value as string).format('YYYY-MM-DD HH:mm'),
     },
     {
-      field: "flag",
-      headerName: "状态",
+      field: 'flag',
+      headerName: '状态',
       width: 100,
       renderCell: ({ value }) => (
         <Chip
-          label={value === 1 ? "正常" : "禁用"}
-          color={value === 1 ? "success" : "default"}
+          label={value === 1 ? '正常' : '禁用'}
+          color={value === 1 ? 'success' : 'default'}
           size="small"
         />
       ),
     },
     {
-      field: "actions",
-      headerName: "操作",
+      field: 'actions',
+      headerName: '操作',
       width: 120,
       sortable: false,
       renderCell: ({ row }) => (
@@ -146,52 +147,53 @@ export const PageTagList = () => {
             size="small"
             onClick={() =>
               mutate({
-                resource: "tags",
+                resource: 'tags',
                 id: row.id,
-                meta: { dataProviderName: "blog" },
-              })
-            }
+                meta: { dataProviderName: 'blog' },
+              })}
           >
             <DeleteIcon />
           </IconButton>
         </Stack>
       ),
     },
-  ];
+  ]
 
   return (
     <Box>
       <PageHeader
         title="标签管理"
-        rightSlot={
+        rightSlot={(
           <Stack direction="row" spacing={2}>
             <Button
               variant="outlined"
-              onClick={() => go({ to: "/blog/posts" })}
+              onClick={() => go({ to: '/blog/posts' })}
             >
               返回博客
             </Button>
             <Button
               variant="contained"
-              onClick={() => go({ to: "/blog/tags/create" })}
+              onClick={() => go({ to: '/blog/tags/create' })}
             >
               新建标签
             </Button>
           </Stack>
-        }
+        )}
       />
-      {isLoading ? (
-        <TableSkeleton />
-      ) : (
-        <Paper variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
-          <DataGrid
-            {...dataGridProps}
-            columns={columns}
-            autoHeight
-            pageSizeOptions={[10, 25, 50]}
-          />
-        </Paper>
-      )}
+      {isLoading
+        ? (
+            <TableSkeleton />
+          )
+        : (
+            <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
+              <DataGrid
+                {...dataGridProps}
+                columns={columns}
+                autoHeight
+                pageSizeOptions={[10, 25, 50]}
+              />
+            </Paper>
+          )}
     </Box>
-  );
-};
+  )
+}

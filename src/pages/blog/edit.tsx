@@ -1,40 +1,41 @@
-import { useList, type HttpError } from "@refinedev/core";
-import { useForm } from "@refinedev/react-hook-form";
-import { Controller } from "react-hook-form";
+import type { HttpError } from '@refinedev/core'
+import type { Blog, Category, Tag } from '@/types'
 import {
+  Autocomplete,
   Box,
   Button,
-  TextField,
-  Autocomplete,
-  MenuItem,
-  Select,
   FormControl,
   InputLabel,
+  MenuItem,
   Paper,
-} from "@mui/material";
-import { PageHeader } from "@/components/layout/page-header";
-import { LoadingOverlay } from "@/components/loading-overlay";
-import { Blog, Category, Tag } from "@/types";
+  Select,
+  TextField,
+} from '@mui/material'
+import { useList } from '@refinedev/core'
+import { useForm } from '@refinedev/react-hook-form'
+import { Controller } from 'react-hook-form'
+import { PageHeader } from '@/components/layout/page-header'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
 type FormValues = Omit<
   Blog,
-  "id" | "createTime" | "updateTime" | "readCount" | "score"
->;
+  'id' | 'createTime' | 'updateTime' | 'readCount' | 'score'
+>
 
-export const PageBlogEdit = () => {
+export function PageBlogEdit() {
   const { result: categoriesResult } = useList<Category>({
-    resource: "categories",
-    meta: { dataProviderName: "blog" },
-    pagination: { mode: "off" },
-  });
-  const categoryOptions: Category[] = categoriesResult?.data ?? [];
+    resource: 'categories',
+    meta: { dataProviderName: 'blog' },
+    pagination: { mode: 'off' },
+  })
+  const categoryOptions: Category[] = categoriesResult?.data ?? []
 
   const { result: tagsResult } = useList<Tag>({
-    resource: "tags",
-    meta: { dataProviderName: "blog" },
-    pagination: { mode: "off" },
-  });
-  const tagOptions: Tag[] = tagsResult?.data ?? [];
+    resource: 'tags',
+    meta: { dataProviderName: 'blog' },
+    pagination: { mode: 'off' },
+  })
+  const tagOptions: Tag[] = tagsResult?.data ?? []
 
   const {
     refineCore: { formLoading, onFinish, query },
@@ -42,15 +43,15 @@ export const PageBlogEdit = () => {
     handleSubmit,
   } = useForm<Blog, HttpError, FormValues>({
     refineCoreProps: {
-      resource: "blogs",
-      action: "edit",
-      meta: { dataProviderName: "blog" },
+      resource: 'blogs',
+      action: 'edit',
+      meta: { dataProviderName: 'blog' },
     },
-  });
+  })
 
   const onFinishHandler = async (values: FormValues) => {
-    await onFinish(values);
-  };
+    await onFinish(values)
+  }
 
   return (
     <LoadingOverlay loading={!!(formLoading || query?.isLoading)}>
@@ -61,13 +62,12 @@ export const PageBlogEdit = () => {
           component="form"
           variant="outlined"
           onSubmit={(e: React.FormEvent) =>
-            void handleSubmit(onFinishHandler)(e)
-          }
+            void handleSubmit(onFinishHandler)(e)}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px",
-            mt: "24px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            mt: '24px',
             p: 3,
             borderRadius: 2,
             maxWidth: 800,
@@ -76,7 +76,7 @@ export const PageBlogEdit = () => {
           <Controller
             name="title"
             control={control}
-            rules={{ required: "标题必填" }}
+            rules={{ required: '标题必填' }}
             render={({ field, fieldState }) => (
               <TextField
                 {...field}
@@ -96,7 +96,7 @@ export const PageBlogEdit = () => {
             )}
           />
 
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Controller
               name="source"
               control={control}
@@ -153,11 +153,11 @@ export const PageBlogEdit = () => {
               <Autocomplete
                 multiple
                 options={categoryOptions}
-                getOptionLabel={(opt) => opt.name}
+                getOptionLabel={opt => opt.name}
                 isOptionEqualToValue={(opt, val) => opt.id === val.id}
                 value={field.value ?? []}
                 onChange={(_, v) => field.onChange(v)}
-                renderInput={(params) => <TextField {...params} label="分类" />}
+                renderInput={params => <TextField {...params} label="分类" />}
               />
             )}
           />
@@ -169,11 +169,11 @@ export const PageBlogEdit = () => {
               <Autocomplete
                 multiple
                 options={tagOptions}
-                getOptionLabel={(opt) => opt.name}
+                getOptionLabel={opt => opt.name}
                 isOptionEqualToValue={(opt, val) => opt.id === val.id}
                 value={field.value ?? []}
                 onChange={(_, v) => field.onChange(v)}
-                renderInput={(params) => <TextField {...params} label="标签" />}
+                renderInput={params => <TextField {...params} label="标签" />}
               />
             )}
           />
@@ -206,7 +206,7 @@ export const PageBlogEdit = () => {
             )}
           />
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button variant="contained" size="large" type="submit">
               保存
             </Button>
@@ -214,5 +214,5 @@ export const PageBlogEdit = () => {
         </Paper>
       </Box>
     </LoadingOverlay>
-  );
-};
+  )
+}

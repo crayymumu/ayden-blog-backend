@@ -1,58 +1,43 @@
-// @ts-check
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import antfu from '@antfu/eslint-config'
 
-export default tseslint.config(
-  {
-    ignores: ['**/dist/**', '**/node_modules/**', 'eslint.config.mjs'],
+export default antfu({
+  react: true,
+  typescript: true,
+  ignores: [
+    '**/dist/**',
+    '**/node_modules/**',
+    'server/generated/**',
+  ],
+  stylistic: {
+    indent: 2,
+    quotes: 'single',
   },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      '@typescript-eslint/no-unsafe-assignment': 'warn',
-      '@typescript-eslint/no-unsafe-member-access': 'warn',
-      '@typescript-eslint/no-unsafe-call': 'warn',
-      '@typescript-eslint/no-misused-promises': 'warn',
-      '@typescript-eslint/no-empty-object-type': 'off',
-      '@typescript-eslint/require-await': 'off',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
-      'no-useless-assignment': 'off',
-      'prettier/prettier': ['error', { endOfLine: 'auto' }],
-    },
+}, {
+  rules: {
+    'node/prefer-global/process': 'off',
+    'node/prefer-global/buffer': 'off',
+    'e18e/prefer-static-regex': 'off',
+    'react-refresh/only-export-components': 'off',
+    'style/max-statements-per-line': 'off',
+    'ts/no-use-before-define': 'off',
+    'react-dom/no-dangerously-set-innerhtml': 'off',
   },
-  {
-    files: ['server/**/*.ts'],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
-      sourceType: 'commonjs',
-    },
+}, {
+  files: ['server/**/*.ts'],
+  rules: {
+    'ts/no-explicit-any': 'off',
+    'ts/no-unsafe-argument': 'off',
+    'ts/no-unsafe-assignment': 'off',
+    'ts/no-unsafe-member-access': 'off',
+    'ts/no-unsafe-call': 'off',
+    'ts/no-empty-object-type': 'off',
+    'ts/require-await': 'off',
+    'ts/consistent-type-imports': 'off',
   },
-  {
-    files: ['src/**/*.{ts,tsx}'],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-      sourceType: 'module',
-    },
+}, {
+  files: ['src/**/*.{ts,tsx}'],
+  rules: {
+    'ts/no-explicit-any': 'off',
+    'ts/no-empty-object-type': 'off',
   },
-);
+})

@@ -1,42 +1,42 @@
-import { type HttpError } from "@refinedev/core";
-import { useForm } from "@refinedev/react-hook-form";
-import { Controller } from "react-hook-form";
+import type { HttpError } from '@refinedev/core'
+import type { Category } from '@/types'
 import {
   Box,
   Button,
-  TextField,
-  MenuItem,
-  Select,
   FormControl,
   InputLabel,
+  MenuItem,
   Paper,
-} from "@mui/material";
-import { PageHeader } from "@/components/layout/page-header";
-import { LoadingOverlay } from "@/components/loading-overlay";
-import { Category } from "@/types";
+  Select,
+  TextField,
+} from '@mui/material'
+import { useForm } from '@refinedev/react-hook-form'
+import { Controller } from 'react-hook-form'
+import { PageHeader } from '@/components/layout/page-header'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
-type FormValues = Omit<Category, "id" | "time">;
+type FormValues = Omit<Category, 'id' | 'time'>
 
-export const PageCategoryCreate = () => {
+export function PageCategoryCreate() {
   const {
     refineCore: { formLoading, onFinish },
     control,
     handleSubmit,
   } = useForm<Category, HttpError, FormValues>({
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       flag: 1,
     },
     refineCoreProps: {
-      resource: "categories",
-      meta: { dataProviderName: "blog" },
+      resource: 'categories',
+      meta: { dataProviderName: 'blog' },
     },
-  });
+  })
 
   const onFinishHandler = async (values: FormValues) => {
-    await onFinish(values);
-  };
+    await onFinish(values)
+  }
 
   return (
     <LoadingOverlay loading={formLoading}>
@@ -47,13 +47,12 @@ export const PageCategoryCreate = () => {
           component="form"
           variant="outlined"
           onSubmit={(e: React.FormEvent) =>
-            void handleSubmit(onFinishHandler)(e)
-          }
+            void handleSubmit(onFinishHandler)(e)}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px",
-            mt: "24px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            mt: '24px',
             p: 3,
             borderRadius: 2,
             maxWidth: 600,
@@ -62,7 +61,7 @@ export const PageCategoryCreate = () => {
           <Controller
             name="name"
             control={control}
-            rules={{ required: "名称必填" }}
+            rules={{ required: '名称必填' }}
             render={({ field, fieldState }) => (
               <TextField
                 {...field}
@@ -96,7 +95,7 @@ export const PageCategoryCreate = () => {
             )}
           />
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button variant="contained" size="large" type="submit">
               提交
             </Button>
@@ -104,5 +103,5 @@ export const PageCategoryCreate = () => {
         </Paper>
       </Box>
     </LoadingOverlay>
-  );
-};
+  )
+}

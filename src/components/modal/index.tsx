@@ -1,79 +1,80 @@
+import type { DialogProps } from '@mui/material'
+import type { ReactNode } from 'react'
 import {
   Box,
-  type DialogProps,
+
   IconButton,
   Dialog as MuiDialog,
   Typography,
-} from "@mui/material";
-import { CloseRectancleIcon } from "@/icons";
-import { LoadingOverlay } from "../loading-overlay";
+} from '@mui/material'
+import { CloseRectancleIcon } from '@/icons'
 
-import type { ReactNode } from "react";
+import { LoadingOverlay } from '../loading-overlay'
 
 type Props = {
-  loading?: boolean;
-  footer?: ReactNode;
-  size?: "medium" | "large";
-} & DialogProps;
+  loading?: boolean
+  footer?: ReactNode
+  size?: 'medium' | 'large'
+} & DialogProps
 
-export const Modal = ({
+export function Modal({
   loading,
   footer,
   children,
-  size = "medium",
+  size = 'medium',
   ...props
-}: Props) => {
+}: Props) {
   return (
     <MuiDialog
       {...props}
       title={undefined}
-      sx={(theme) => ({
-        "& .MuiDialog-container": {
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+      sx={theme => ({
+        '& .MuiDialog-container': {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
 
-        [theme.breakpoints.down("sm")]: {
-          "& .MuiDialog-paper": {
-            height: "100dvh",
-            maxHeight: "100dvh",
-            maxWidth: "100%",
-            width: "100%",
-            margin: "0px",
-            borderRadius: "0px",
+        [theme.breakpoints.down('sm')]: {
+          '& .MuiDialog-paper': {
+            height: '100dvh',
+            maxHeight: '100dvh',
+            maxWidth: '100%',
+            width: '100%',
+            margin: '0px',
+            borderRadius: '0px',
           },
         },
-        [theme.breakpoints.up("sm")]: {
-          "& .MuiDialog-paper": {
-            height: "max-content",
-            maxHeight: "calc(100% - 64px)",
-            maxWidth: size === "medium" ? "520px" : "688px",
-            margin: "8px",
-            borderRadius: "12px",
+        [theme.breakpoints.up('sm')]: {
+          '& .MuiDialog-paper': {
+            height: 'max-content',
+            maxHeight: 'calc(100% - 64px)',
+            maxWidth: size === 'medium' ? '520px' : '688px',
+            margin: '8px',
+            borderRadius: '12px',
           },
         },
       })}
     >
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
         <Box
           sx={{
             flexShrink: 0,
-            backgroundColor: (theme) => theme.palette.common.white,
-            display: "flex",
-            height: "48px",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingLeft: "24px",
-            paddingRight: "8px",
-            borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme => theme.palette.common.white,
+            display: 'flex',
+            height: '48px',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingLeft: '24px',
+            paddingRight: '8px',
+            borderBottom: theme => `1px solid ${theme.palette.divider}`,
             minWidth: {
-              xs: "100%",
-              sm: "520px",
+              xs: '100%',
+              sm: '520px',
             },
           }}
         >
@@ -87,11 +88,11 @@ export const Modal = ({
           </Typography>
           <IconButton
             onClick={(e) => {
-              props.onClose?.(e, "backdropClick");
+              props.onClose?.(e, 'backdropClick')
             }}
             size="medium"
             sx={{
-              borderRadius: "12px",
+              borderRadius: '12px',
             }}
           >
             <CloseRectancleIcon />
@@ -100,14 +101,14 @@ export const Modal = ({
         <Box
           sx={{
             flex: 1,
-            overflow: "auto",
+            overflow: 'auto',
           }}
         >
           <LoadingOverlay loading={!!loading}>
             <Box
               sx={{
-                height: "100%",
-                overflow: "auto",
+                height: '100%',
+                overflow: 'auto',
               }}
             >
               {children}
@@ -117,5 +118,5 @@ export const Modal = ({
         {footer && <Box sx={{ flexShrink: 0 }}>{footer}</Box>}
       </Box>
     </MuiDialog>
-  );
-};
+  )
+}
