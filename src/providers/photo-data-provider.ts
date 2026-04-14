@@ -125,7 +125,7 @@ export const photoDataProvider = {
     const url = resource === 'photo-tags' ? `${base}/${id}` : base
     const res = await api.put(url, { json: body }).json<ApiResult<PhotoResource>>()
     assertOk(res)
-    return { data: res.data ?? (body as PhotoResource) }
+    return { data: res.data ?? (body as unknown as PhotoResource) }
   },
 
   deleteOne: async ({ resource, id }) => {
