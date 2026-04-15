@@ -40,6 +40,7 @@ jobs:
       - run: pnpm run build
         env:
           VITE_BLOG_API_URL: ${{ secrets.VITE_BLOG_API_URL }}
+          VITE_PUBLIC_IMAGE_CDN_URL: ${{ secrets.VITE_PUBLIC_IMAGE_CDN_URL }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
