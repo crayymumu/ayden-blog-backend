@@ -106,6 +106,7 @@ jobs:
 
             npm install --omit=dev --ignore-scripts
             npx prisma generate --schema=prisma/schema.prisma
+            npx prisma generate --schema=prisma/schema-photos.prisma
 
             PREVIOUS=""
             if [ -L "$CURRENT" ]; then PREVIOUS="$(readlink -f "$CURRENT")"; fi
@@ -116,7 +117,7 @@ jobs:
             pm2 delete blog-server 2>/dev/null || true
             pm2 start ecosystem.config.js --env production
 
-            sleep 10
+            sleep 30
 
             if [ -n "$HEALTHCHECK_URL" ]; then
               HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$HEALTHCHECK_URL") || HTTP_CODE="000"
